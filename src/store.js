@@ -4,7 +4,6 @@ import { foundRectangles } from './getSolution';
 
 export const StoreContext = React.createContext()
 
-
 export class StoreActions {
   static update = 'Update'
 }
@@ -19,7 +18,6 @@ export const rootReducer = (state, action) => {
         rectangles: []       
       }
       const theseRectangles = foundRectangles(thisUpdate.asciiArt, thisUpdate.corner)
-      console.log('rects', theseRectangles)
       thisUpdate.rectangles = theseRectangles
       return {...state, ...thisUpdate}
     default:

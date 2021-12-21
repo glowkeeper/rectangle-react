@@ -17,11 +17,15 @@ export const Solution = () => {
             { length > 0 && (
                 <>
                     <h2>There are {length} solution(s)</h2>
+                    <ul className="ascii responsive-grid">
                     {rectangles.map((rectangle, index) => {
-                        return (
-                            <div key={index} dangerouslySetInnerHTML={{__html: rectangle}} />
+                        return (                            
+                            <li key={index} className="ascii-solution">
+                                <div key={index} dangerouslySetInnerHTML={{__html: rectangle}} />
+                            </li>
                         )
                     })}
+                    </ul>
                 </>
             )}
         </>

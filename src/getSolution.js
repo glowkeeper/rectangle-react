@@ -157,6 +157,26 @@ const getRectanglesHTML = (art, foundRectangles) => {
   return rectangleHTML;
 };
 
+/*
++---+--+----+
+|   +--+----+
++---+--+    |
+|   +--+----+
++---+--+--+-+
++---+--+--+-+
++------+  | |
+          +-+
+
++---+--+----++---+--+----++---+--+----+
+|   +--+----+|   +--+----+|   +--+----+
++---+--+    |+---+--+    |+---+--+    |
+|   +--+----+|   +--+----+|   +--+----+
++---+--+--+-++---+--+--+-++---+--+--+-+
++---+--+--+-++---+--+--+-++---+--+--+-+
++------+  | |+------+  | |+------+  | |
+          +-+          +-+          +-+
+*/
+
 export const foundRectangles = (asciiArt, corner) => {
   const thisArt = getLines(asciiArt)
   const rectangles = getRectangles(getTuples(findIndices(thisArt, corner)))
