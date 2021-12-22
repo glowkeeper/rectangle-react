@@ -5,27 +5,37 @@ import { StoreContext } from '../store'
 export const Solution = () => {
     const store = useContext(StoreContext)
 
-    let length = 0
+    let numSolutions = 0
     let rectangles = []
+    let rowHeight = ''
+    let columnWidth = ''
     if ( store.state.rectangles ) {
-        length = store.state.rectangles.length
+        numSolutions = store.state.rectangles.length
         rectangles = store.state.rectangles
+        const asciiArt = store.state.asciiArt.split(/\n/);
+        rowHeight = `${asciiArt.length}fr`
+        columnWidth = `${asciiArt[0].length}ch`
     }
 
     return (
         <>
-            { length > 0 && (
+            { numSolutions > 0 && (
                 <>
-                    <h2>There are {length} solution(s)</h2>
-                    <ul className="ascii responsive-grid">
-                    {rectangles.map((rectangle, index) => {
-                        return (                            
-                            <li key={index} className="ascii-solution">
-                                <div key={index} dangerouslySetInnerHTML={{__html: rectangle}} />
-                            </li>
-                        )
-                    })}
-                    </ul>
+                    <h2>There are {numSolutions} solution(s)</h2>
+                    <div 
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: `repeat(auto-fit, minmax(${columnWidth}, 1fr))`,
+                            gridAutoRows: `${rowHeight}`,
+                            gap: '8px',
+                        }}
+                    >
+                        {rectangles.map((rectangle, index) => {
+                            return (        
+                                <div key={index} className="ascii-solution" dangerouslySetInnerHTML={{__html: rectangle}} />
+                            )
+                        })}
+                    </div>
                 </>
             )}
         </>

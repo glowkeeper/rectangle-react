@@ -56,7 +56,7 @@ export const Artwork = () => {
                 <div id="seperator">&nbsp;</div>
                 <div id="input-grid">
                     <div id="input-ascii">
-                        <label id="textarea-label" htmlFor="asciiArt">ASCII Art</label>
+                        <label id="ascii-label" htmlFor="asciiArt">ASCII Art:</label>
                         <textarea
                             className="art-input"
                             id="asciiArt"
@@ -67,21 +67,21 @@ export const Artwork = () => {
                             onChange={handleChange}
                         />
                     </div>
-                    <div id="input-corner">
-                        <label id="input-label"  htmlFor="corner">Corner</label>
-                        <input
-                            className="corner-input"
-                            type="text"
-                            id="corner"
-                            name="corner"
-                            placeholder="+"
-                            required
-                            maxLength="1"
-                            onChange={handleChange}
-                            value={art.corner}
-                        />
-                    </div>
                     <div id="form-buttons">
+                        <div id="input-corner">
+                            <label id="corner-label"  htmlFor="corner">Corner:</label>
+                            <input
+                                className="corner-input"
+                                type="text"
+                                id="corner"
+                                name="corner"
+                                placeholder="+"
+                                required
+                                maxLength="1"
+                                onChange={handleChange}
+                                value={art.corner}
+                            />
+                        </div>
                         <button type="submit">Submit</button>
                         <button onClick={handleClick}>Reset</button> 
                     </div>

@@ -97,9 +97,11 @@ const getRectangles = (tuples) => {
 /*
 * outputs the html code for a space, if necessary
 */
-const getCharHTML = (char) => {
-  if (char === " ") {
-      return "&nbsp;";
+const getCharHTML = (char, doColour, corner ) => {
+  if ( doColour ) {
+    return corner
+  } else if (char === " ") {
+    return "&nbsp;";
   }
   return char;
 };
@@ -107,18 +109,24 @@ const getCharHTML = (char) => {
 /*
 * colours the found rectangle
 */
-const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord) => {
+const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner) => {
   let thisHTML = "<pre>";
-  let colourOn = false;
+  let isFound, doColour = false;
   for (let i = 0; i < art.length; i++) {
       const thisLine = art[i];
-      if (i === firstRow) colourOn = true;
+      if (i === firstRow) isFound = true;
       for (let j = 0; j < thisLine.length; j++) {
-        if (j === xCoord && colourOn) thisHTML += '<span style="color:red">';
-        thisHTML += getCharHTML(thisLine[j]);
-        if (j === yCoord && colourOn) thisHTML += "</span>";
+        if (j === xCoord && isFound) {
+          thisHTML += '<span style="color:red">';
+          doColour = true;
+        }
+        thisHTML += getCharHTML(thisLine[j], doColour, corner);
+        if (j === yCoord && isFound) {
+          thisHTML += "</span>";
+          doColour = false;
+        }
       }
-      if (i === lastRow) colourOn = false;
+      if (i === lastRow) isFound = false;
       thisHTML += "<br/>";
   }
   thisHTML += "</pre>";
@@ -129,7 +137,7 @@ const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord) => {
 * creates the found rectangle's base row, last row
 * and the x and y cordinates of its corners
 */
-const getRectanglesHTML = (art, foundRectangles) => {
+const getRectanglesHTML = (art, foundRectangles, corner) => {
   let rectangleHTML = [];
   for (let i = 0; i < art.length; i++) {
       if (foundRectangles.hasOwnProperty(i)) {
@@ -147,7 +155,8 @@ const getRectanglesHTML = (art, foundRectangles) => {
                   baseRow,
                   thisRow,
                   xCoord,
-                  yCoord
+                  yCoord, 
+                  corner
               );
               rectangleHTML.push(thisHTML);
             }
@@ -158,6 +167,12 @@ const getRectanglesHTML = (art, foundRectangles) => {
 };
 
 /*
+   +--+
+  ++  |
++-++--+
+|  |  |
++--+--+
+
 +---+--+----+
 |   +--+----+
 +---+--+    |
@@ -175,11 +190,19 @@ const getRectanglesHTML = (art, foundRectangles) => {
 +---+--+--+-++---+--+--+-++---+--+--+-+
 +------+  | |+------+  | |+------+  | |
           +-+          +-+          +-+
++---+--+----++---+--+----++---+--+----+
+|   +--+----+|   +--+----+|   +--+----+
++---+--+    |+---+--+    |+---+--+    |
+|   +--+----+|   +--+----+|   +--+----+
++---+--+--+-++---+--+--+-++---+--+--+-+
++---+--+--+-++---+--+--+-++---+--+--+-+
++------+  | |+------+  | |+------+  | |
+          +-+          +-+          +-+
 */
 
 export const foundRectangles = (asciiArt, corner) => {
   const thisArt = getLines(asciiArt)
   const rectangles = getRectangles(getTuples(findIndices(thisArt, corner)))
-  return getRectanglesHTML(thisArt, rectangles)
+  return getRectanglesHTML(thisArt, rectangles, corner)
 } 
 
