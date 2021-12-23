@@ -9,6 +9,29 @@
 */
 const getLines = (asciiArt) => asciiArt.split(/\n/);
 
+/* 
+* find longest line
+*/
+const getMaxLineLength = (lines) => {
+  let initialValue = 0
+  if (lines.length) initialValue = lines[0].length
+  const max = lines.reduce((previous, current) => {
+    return previous >= current.length ? previous : current.length
+  }, initialValue)
+  return max
+} 
+
+/* 
+* ensure all lines are the same length
+* by padding short lines with ' '
+* (doing this ensures getCharHTML, used later, does the right thing ;) )
+*/
+const padLines = (lines) => {
+  const maxLineLength = getMaxLineLength(lines)
+  const newLines = lines.map(line => line.padEnd(maxLineLength, ' '))
+  return newLines
+}
+
 /*
 * find index of 'corner' for each line
 * and remove all lines with only 0 or 1 'corner'
@@ -202,7 +225,9 @@ const getRectanglesHTML = (art, foundRectangles, corner) => {
 
 export const foundRectangles = (asciiArt, corner) => {
   const thisArt = getLines(asciiArt)
-  const rectangles = getRectangles(getTuples(findIndices(thisArt, corner)))
-  return getRectanglesHTML(thisArt, rectangles, corner)
+  const newArt = padLines(thisArt)
+  const rectangles = getRectangles(getTuples(findIndices(newArt, corner)))
+  const rectanglesHTML = getRectanglesHTML(newArt, rectangles, corner)
+  return rectanglesHTML
 } 
 

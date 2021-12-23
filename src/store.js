@@ -18,6 +18,7 @@ export const rootReducer = (state, action) => {
         rectangles: []       
       }
       const theseRectangles = foundRectangles(thisUpdate.asciiArt, thisUpdate.corner)
+      //console.log('these', theseRectangles)
       thisUpdate.rectangles = theseRectangles
       return {...state, ...thisUpdate}
     default:

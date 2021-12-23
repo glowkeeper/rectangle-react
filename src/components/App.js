@@ -5,6 +5,8 @@ import { StoreContext, rootReducer } from '../store'
 import { Artwork } from './Artwork'
 import { Solution } from './Solution'
 
+import { UIText } from '../config'
+
 export const App = () => {
 
     const [state, dispatch] = useReducer(rootReducer, [])
@@ -16,9 +18,8 @@ export const App = () => {
     return (
         <>
             <main>
-                <StoreContext.Provider value={store}>            
-
-                    <h1>ASCII Art Rectangle Counter</h1>
+                <div dangerouslySetInnerHTML={{__html: UIText.title}} />
+                <StoreContext.Provider value={store}>                     
                     <Artwork />
                     <Solution />
                 </StoreContext.Provider>
