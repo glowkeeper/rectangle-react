@@ -1,6 +1,6 @@
 export class LocalRoutes {
-    static home = "/"
-    static about = "/about"
+    static home = "/rectangle-react"
+    static about = `${LocalRoutes.home}/about`
 }
 
 export class UIText {
