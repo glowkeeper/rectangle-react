@@ -1,28 +1,33 @@
-import React, { useReducer, useMemo } from 'react'
+import { Route, Routes } from "react-router"
+import { Link } from "react-router-dom"
 
-import { StoreContext, rootReducer } from '../store'
+import { Draw } from './Draw'
+import { About } from './About'
 
-import { Artwork } from './Artwork'
-import { Solution } from './Solution'
-
-import { UIText } from '../config'
+import { UIText, LocalRoutes } from '../config'
 
 export const App = () => {
 
-    const [state, dispatch] = useReducer(rootReducer, [])
-
-    const store = useMemo(() => {
-        return { state: state, dispatch: dispatch }
-    }, [state, dispatch])
-
     return (
         <>
+            <header>
+                <div dangerouslySetInnerHTML={{__html: UIText.appTitle}} />
+                <nav>
+                    <Link to={LocalRoutes.home}>{UIText.linkHome}</Link>
+                    <Link to={LocalRoutes.about}>{UIText.linkAbout}</Link>
+                </nav>
+            </header>
             <main>
-                <div dangerouslySetInnerHTML={{__html: UIText.title}} />
-                <StoreContext.Provider value={store}>                     
-                    <Artwork />
-                    <Solution />
-                </StoreContext.Provider>
+                <Routes>
+                    <Route
+                        path={LocalRoutes.home}
+                        element={<Draw />}
+                    />
+                    <Route
+                        path={LocalRoutes.about}
+                        element={<About />}
+                    />
+                </Routes>
             </main>
         </>
     )

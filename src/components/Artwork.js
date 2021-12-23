@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react'
 
 import { StoreContext, StoreActions } from '../store'
 
+import { UIText } from '../config'
+
 const initialArt = {
     asciiArt: "",
     corner: ""
@@ -53,10 +55,9 @@ export const Artwork = () => {
     return (
         <>
             <form onSubmit={handleSubmit}>
-                <div id="seperator">&nbsp;</div>
                 <div id="input-grid">
                     <div id="input-ascii">
-                        <label id="ascii-label" htmlFor="asciiArt">ASCII Art:</label>
+                        <label id="ascii-label" htmlFor="asciiArt">{UIText.inputText}:</label>
                         <textarea
                             className="art-input"
                             id="asciiArt"
@@ -69,7 +70,7 @@ export const Artwork = () => {
                     </div>
                     <div id="form-buttons">
                         <div id="input-corner">
-                            <label id="corner-label"  htmlFor="corner">Corner:</label>
+                            <label id="corner-label"  htmlFor="corner">{UIText.inputCorner}:</label>
                             <input
                                 className="corner-input"
                                 type="text"

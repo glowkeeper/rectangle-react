@@ -2,6 +2,8 @@ import React, { useContext } from 'react'
 
 import { StoreContext } from '../store'
 
+import { UIText } from '../config'
+
 export const Solution = () => {
     const store = useContext(StoreContext)
 
@@ -21,7 +23,7 @@ export const Solution = () => {
         <>
             { numSolutions > 0 && (
                 <>
-                    <h2>There are {numSolutions} solution(s)</h2>
+                    <p>{UIText.outputSolutions}: {numSolutions}</p>
                     <div 
                         style={{
                             display: 'grid',
