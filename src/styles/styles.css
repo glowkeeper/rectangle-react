@@ -39,6 +39,10 @@ h2 {
   font-size: 1rem;
 }
 
+p#solutions {
+  margin: 0 0 1em 0
+}
+
 a:link {
   text-decoration: none;
 }
@@ -121,6 +125,8 @@ input {
   place-items: center center;
   padding: 5px;
 
+
+  border-radius: 5px;
   border: 1px solid rgb(124, 120, 120);
 }
 

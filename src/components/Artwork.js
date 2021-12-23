@@ -7,7 +7,7 @@ import { StoreContext, StoreActions, initialState } from '../store'
 import { UIText } from '../config'
 
 const initialArt = {
-    userHasSubmitted: true,
+    userHasSubmitted: initialState.userHasSubmitted,
     asciiArt: initialState.asciiArt,
     corner: initialState.corner,
     colour: initialState.colour
@@ -22,7 +22,7 @@ export const Artwork = () => {
 
         store.dispatch({
             type: StoreActions.update,
-            payload: art
+            payload: { ...art, userHasSubmitted: true}
         })
     }
 

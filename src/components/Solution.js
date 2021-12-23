@@ -24,7 +24,7 @@ export const Solution = () => {
         <>
             { hasSubmitted && (
                 <>
-                    <p>{UIText.outputSolutions}: {numSolutions}</p>
+                    <p id="solutions">{UIText.outputSolutions}: {numSolutions}</p>
                     <div 
                         style={{
                             display: 'grid',
