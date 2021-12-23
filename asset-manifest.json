@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/rectangle-react/static/css/main.52fb23ab.css",
-    "main.js": "/rectangle-react/static/js/main.71c4694c.js",
+    "main.js": "/rectangle-react/static/js/main.feed7fc9.js",
     "index.html": "/rectangle-react/index.html",
     "main.52fb23ab.css.map": "/rectangle-react/static/css/main.52fb23ab.css.map",
-    "main.71c4694c.js.map": "/rectangle-react/static/js/main.71c4694c.js.map"
+    "main.feed7fc9.js.map": "/rectangle-react/static/js/main.feed7fc9.js.map"
   },
   "entrypoints": [
     "static/css/main.52fb23ab.css",
-    "static/js/main.71c4694c.js"
+    "static/js/main.feed7fc9.js"
   ]
 }
