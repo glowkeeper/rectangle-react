@@ -40,13 +40,20 @@ export const Artwork = () => {
 
     const handleClick = (event) => {
         event.preventDefault();
+
+        const cleared = {
+            userHasSubmitted: false,
+            asciiArt: "",
+            corner: "",
+            colour: initialState.colour
+        }
         
-        setArt(initialArt)
+        setArt(cleared)
 
         store.dispatch({
             type: StoreActions.update,
-            payload: initialArt
-        })
+            payload: cleared
+        })        
     }
 
     return (
