@@ -2,15 +2,15 @@ import React, { useContext, useState } from 'react'
 
 import { CompactPicker } from 'react-color'
 
-import { StoreContext, StoreActions } from '../store'
+import { StoreContext, StoreActions, initialState } from '../store'
 
 import { UIText } from '../config'
 
 const initialArt = {
     userHasSubmitted: true,
-    asciiArt: "",
-    corner: "",
-    colour: "#ff0000"
+    asciiArt: initialState.asciiArt,
+    corner: initialState.corner,
+    colour: initialState.colour
 }
 
 export const Artwork = () => {
@@ -75,7 +75,6 @@ export const Artwork = () => {
                                 type="text"
                                 id="corner"
                                 name="corner"
-                                placeholder="+"
                                 required
                                 maxLength="1"
                                 onChange={handleChangeInput}

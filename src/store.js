@@ -31,8 +31,8 @@ export const rootReducer = (state, action) => {
 
 export const initialState = {
   userHasSubmitted: false,
-  asciiArt: "",
-  corner: "",
+  asciiArt: "   +--+\n  ++  |\n+-++--+\n|  |  |\n+--+--+",
+  corner: "+",
   colour: "#ff0000",
   rectangles: [],
 }

@@ -119,6 +119,7 @@ input {
 .ascii-solution {
   display: grid;
   place-items: center center;
+  padding: 5px;
 
   border: 1px solid rgb(124, 120, 120);
 }

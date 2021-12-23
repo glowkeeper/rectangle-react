@@ -6,7 +6,7 @@ export const About = () => {
         <>
             <h2>{UIText.appTitleAbout}</h2>
             <div id="seperator">&nbsp;</div>
-            <p>{UIText.appTextAbout}</p>
+            <div dangerouslySetInnerHTML={{__html: UIText.appTextAbout}} />
         </>
     )
 }
