@@ -11,6 +11,7 @@ export const Solution = () => {
     let rectangles = []
     let rowHeight = ''
     let columnWidth = ''
+    const hasSubmitted = store.state.userHasSubmitted
     if ( store.state.rectangles ) {
         numSolutions = store.state.rectangles.length
         rectangles = store.state.rectangles
@@ -21,7 +22,7 @@ export const Solution = () => {
 
     return (
         <>
-            { numSolutions > 0 && (
+            { hasSubmitted && (
                 <>
                     <p>{UIText.outputSolutions}: {numSolutions}</p>
                     <div 

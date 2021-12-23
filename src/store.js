@@ -13,6 +13,7 @@ export const rootReducer = (state, action) => {
     case StoreActions.update:
       //console.log('made it here', action)
       const thisUpdate = {
+        userHasSubmitted: action.payload.userHasSubmitted,
         asciiArt: action.payload.asciiArt,
         corner: action.payload.corner,
         colour: action.payload.colour,
@@ -29,6 +30,7 @@ export const rootReducer = (state, action) => {
 }
 
 export const initialState = {
+  userHasSubmitted: false,
   asciiArt: "",
   corner: "",
   colour: "#ff0000",

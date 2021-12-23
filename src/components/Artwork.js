@@ -7,6 +7,7 @@ import { StoreContext, StoreActions } from '../store'
 import { UIText } from '../config'
 
 const initialArt = {
+    userHasSubmitted: true,
     asciiArt: "",
     corner: "",
     colour: "#ff0000"
