@@ -4,14 +4,22 @@ export class LocalRoutes {
 }
 
 export class UIText {
-    static appTitle = '<pre>+----+ +---+ +---+ +---+    +     ++    + +---+ +     +---+ +---+<br/>|    | |     |       |     / \\    | \\   | |     |     |     |    <br/>+----+ +--+  |       |    +---+   |  \\  | | +-+ |     +--+  +---+<br/>|  \\   |     |       |   /     \\  |   \\ | |   | |     |         |<br/>+    + +---+ +---+   +  +       + +    ++ +---+ +---+ +---+ +---+<br/></pre>'
+    static appTabTitle = "rectangles"
+    static appTitle = '<pre><h1>+----+ +---+ +---+ +---+    +     ++    + +---+ +     +---+ +---+<br/>|    | |     |       |     / \\    | \\   | |     |     |     |    <br/>+----+ +--+  |       |    +---+   |  \\  | | +-+ |     +--+  +---+<br/>|  \\   |     |       |   /     \\  |   \\ | |   | |     |         |<br/>+    + +---+ +---+   +  +       + +    ++ +---+ +---+ +---+ +---+</h1></pre>'
+    static appTitleAbout = "about"
+    static appTitleHome = "count"
+
     static appTextAbout = "blah"
 
     static linkHome = "home"
     static linkAbout = "about"
 
-    static inputText = "text"
+    static inputText = "find rectangles for"
     static inputCorner = "corner"
+    static inputColour = "colour"
+
+    static buttonSubmit = "submit"
+    static buttonClear = "clear"
 
     static outputSolutions = "number of solutions"
 }

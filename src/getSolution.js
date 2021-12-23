@@ -132,7 +132,7 @@ const getCharHTML = (char, doColour, corner ) => {
 /*
 * colours the found rectangle
 */
-const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner) => {
+const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner, colour) => {
   let thisHTML = "<pre>";
   let isFound, doColour = false;
   for (let i = 0; i < art.length; i++) {
@@ -140,7 +140,7 @@ const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner) => {
       if (i === firstRow) isFound = true;
       for (let j = 0; j < thisLine.length; j++) {
         if (j === xCoord && isFound) {
-          thisHTML += '<span style="color:red">';
+          thisHTML += `<span style="color:${colour}">`;
           doColour = true;
         }
         thisHTML += getCharHTML(thisLine[j], doColour, corner);
@@ -160,7 +160,7 @@ const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner) => {
 * creates the found rectangle's base row, last row
 * and the x and y cordinates of its corners
 */
-const getRectanglesHTML = (art, foundRectangles, corner) => {
+const getRectanglesHTML = (art, foundRectangles, corner, colour) => {
   let rectangleHTML = [];
   for (let i = 0; i < art.length; i++) {
       if (foundRectangles.hasOwnProperty(i)) {
@@ -179,7 +179,8 @@ const getRectanglesHTML = (art, foundRectangles, corner) => {
                   thisRow,
                   xCoord,
                   yCoord, 
-                  corner
+                  corner,
+                  colour
               );
               rectangleHTML.push(thisHTML);
             }
@@ -223,11 +224,11 @@ const getRectanglesHTML = (art, foundRectangles, corner) => {
           +-+          +-+          +-+
 */
 
-export const foundRectangles = (asciiArt, corner) => {
+export const foundRectangles = (asciiArt, corner, colour) => {
   const thisArt = getLines(asciiArt)
   const newArt = padLines(thisArt)
   const rectangles = getRectangles(getTuples(findIndices(newArt, corner)))
-  const rectanglesHTML = getRectanglesHTML(newArt, rectangles, corner)
+  const rectanglesHTML = getRectanglesHTML(newArt, rectangles, corner, colour)
   return rectanglesHTML
 } 
 

@@ -15,9 +15,11 @@ export const rootReducer = (state, action) => {
       const thisUpdate = {
         asciiArt: action.payload.asciiArt,
         corner: action.payload.corner,
+        colour: action.payload.colour,
         rectangles: []       
       }
-      const theseRectangles = foundRectangles(thisUpdate.asciiArt, thisUpdate.corner)
+      const theseRectangles = 
+        foundRectangles(thisUpdate.asciiArt, thisUpdate.corner, thisUpdate.colour)
       //console.log('these', theseRectangles)
       thisUpdate.rectangles = theseRectangles
       return {...state, ...thisUpdate}
@@ -29,5 +31,6 @@ export const rootReducer = (state, action) => {
 export const initialState = {
   asciiArt: "",
   corner: "",
+  colour: "#ff0000",
   rectangles: [],
 }

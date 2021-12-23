@@ -1,5 +1,7 @@
 body {
   font-family: sans-serif;
+
+  margin: 2rem;
   
   height: 100vh;
   background-color: rgba(237, 238, 226, 0.904);
@@ -28,11 +30,27 @@ pre {
   margin: 0
 }
 
+h1 {
+  font-size: 0.7rem;
+  margin: 0
+}
+
+h2 {
+  font-size: 1rem;
+}
+
 a:link {
   text-decoration: none;
 }
 
-#ascii-label {
+a:hover {
+  text-decoration: none;
+  color: rgba(218, 21, 21, 1);
+}
+
+#ascii-label,
+#corner-label,
+#colour-label {
   display: grid;
   place-items: center start;
 }
@@ -49,11 +67,6 @@ textarea {
   font-size: 1rem;
 }
 
-#corner-label {
-  display: grid;
-  place-items: center start;
-}
-
 input {
   display: grid;
   place-items: center start;
@@ -61,7 +74,7 @@ input {
   width: 1ch;
   border: none;
   padding: 10px;
-  margin: 10px 0;
+  margin: 0;
 
   font-size: 1rem;
 }
@@ -83,16 +96,23 @@ input {
   grid-gap: 5px;
 }
 
-#input-corner {
+#input-corner,
+#input-colour {
   display: grid;
   grid-template-columns: 1fr 4fr;
   grid-gap: 5px;
 }
 
-#form-buttons {
+#info {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 2fr 1fr;
+  grid-gap: 10px;
+}
+
+#form-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   grid-gap: 5px;
 }
 
