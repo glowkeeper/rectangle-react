@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Route, Routes } from "react-router"
 import { Link } from "react-router-dom"
 
@@ -8,7 +9,15 @@ import { UIText, LocalRoutes } from '../config'
 
 export const App = () => {
 
-    return (
+    useEffect(() => {
+        const prevTitle = document.title;
+        document.title = UIText.appTabTitle;
+        return () => {
+          document.title = prevTitle;
+        };
+      });
+
+    return (    
         <>
             <header>
                 <div dangerouslySetInnerHTML={{__html: UIText.appTitle}} />
