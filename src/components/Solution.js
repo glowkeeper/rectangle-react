@@ -30,6 +30,8 @@ export const Solution = () => {
                             display: 'grid',
                             gridTemplateColumns: `repeat(auto-fit, minmax(${columnWidth}, 1fr))`,
                             gridAutoRows: `${rowHeight}`,
+                            padding: '0',
+                            border: 'none',
                             gap: '8px',
                         }}
                     >

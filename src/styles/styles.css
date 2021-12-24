@@ -54,33 +54,23 @@ a:hover {
 
 #ascii-label,
 #corner-label,
-#colour-label {
+#colour-label,
+textarea, input  {
   display: grid;
   place-items: center start;
 }
 
-textarea {
-  display: grid;
-  place-items: center start;
-
-  border: none;
-  width: 80%;
-  padding: 10px;
-  margin: 10px 0;
-
-  font-size: 1rem;
-}
-
-input {
-  display: grid;
-  place-items: center start;
-
-  width: 1ch;
+textarea, input 
+{  
   border: none;
   padding: 10px;
   margin: 0;
 
   font-size: 1rem;
+}
+
+input {
+  width: 1ch;
 }
 
 #seperator {  
@@ -91,7 +81,7 @@ input {
 #input-grid {
   display: grid;
   grid-template-columns: 5fr 1fr;
-  grid-gap: 5px;
+  grid-gap: 20px;
 }
 
 #input-ascii {
@@ -123,11 +113,54 @@ input {
 .ascii-solution {
   display: grid;
   place-items: center center;
-  padding: 5px;
-
+  padding: 10px;
 
   border-radius: 5px;
   border: 1px solid rgb(124, 120, 120);
+}
+
+@media screen and (max-width: 600px) {
+
+  body {  
+    margin: 1rem;
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 5px;
+  }
+  
+  header > nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 5px;
+  }
+
+  Link {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 0.4rem;
+    margin: 0
+  }
+
+  #input-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 5px;
+  }
+
+  textarea, 
+  input {
+    padding: 5px;
+  }
+
+  .ascii-solution {
+    padding: 0px;  
+    border: none;
+  }
 }
 
 
