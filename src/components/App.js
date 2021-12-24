@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Route, Routes } from "react-router"
 import { Link } from "react-router-dom"
 
-import { Draw } from './Draw'
+import { Artwork } from './Artwork'
 import { About } from './About'
 
 import { UIText, LocalRoutes } from '../config'
@@ -30,7 +30,7 @@ export const App = () => {
                 <Routes>
                     <Route
                         path={LocalRoutes.home}
-                        element={<Draw />}
+                        element={<Artwork />}
                     />
                     <Route
                         path={LocalRoutes.about}

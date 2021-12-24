@@ -1,6 +1,4 @@
-import React from 'react'
-
-import { foundRectangles } from './getSolution';
+import React, { useReducer } from 'react'
 
 export const StoreContext = React.createContext()
 
@@ -12,18 +10,7 @@ export const rootReducer = (state, action) => {
   switch (action.type) {
     case StoreActions.update:
       //console.log('made it here', action)
-      const thisUpdate = {
-        userHasSubmitted: action.payload.userHasSubmitted,
-        asciiArt: action.payload.asciiArt,
-        corner: action.payload.corner,
-        colour: action.payload.colour,
-        rectangles: []       
-      }
-      const theseRectangles = 
-        foundRectangles(thisUpdate.asciiArt, thisUpdate.corner, thisUpdate.colour)
-      //console.log('these', theseRectangles)
-      thisUpdate.rectangles = theseRectangles
-      return {...state, ...thisUpdate}
+      return {...state, ...action.payload}
     default:
       return state
   }
@@ -35,4 +22,18 @@ export const initialState = {
   corner: "+",
   colour: "#ff0000",
   rectangles: [],
+}
+
+export const useReducerWithThunk = (reducer, initialState) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const customDispatch = (action) => {
+    if (typeof action === 'function') {
+        action(customDispatch);
+    } else {
+        dispatch(action); 
+    }
+  };
+  
+  return [state, customDispatch];
 }

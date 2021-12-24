@@ -1,29 +1,37 @@
-import React, { useContext, useState } from 'react'
+import React, { useState, useMemo } from 'react'
 
 import { CompactPicker } from 'react-color'
 
-import { StoreContext, StoreActions, initialState } from '../store'
+import { Solution } from './Solution'
+
+import { GetRectangles } from '../getSolution'
+
+import { 
+    StoreContext, 
+    StoreActions, 
+    rootReducer,
+    initialState, 
+    useReducerWithThunk 
+} from '../store'
 
 import { UIText } from '../config'
 
-const initialArt = {
-    userHasSubmitted: initialState.userHasSubmitted,
-    asciiArt: initialState.asciiArt,
-    corner: initialState.corner,
-    colour: initialState.colour
-}
-
 export const Artwork = () => {
-    const [art, setArt] = useState(initialArt)
-    const store = useContext(StoreContext)
+    const [state, dispatch] = useReducerWithThunk(rootReducer, initialState)
+    const [art, setArt] = useState(initialState)
+
+    const store = useMemo(() => {
+        return { state: state, dispatch: dispatch }
+    }, [state, dispatch])
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const userHasSubmitted = true;
 
-        store.dispatch({
-            type: StoreActions.update,
-            payload: { ...art, userHasSubmitted: true}
-        })
+        store.dispatch(
+            GetRectangles(store.dispatch, userHasSubmitted, art.asciiArt, art.corner, art.colour)
+        )
     }
 
     const handleChangeInput = (event) => {
@@ -45,7 +53,8 @@ export const Artwork = () => {
             userHasSubmitted: false,
             asciiArt: "",
             corner: "",
-            colour: initialState.colour
+            colour: initialState.colour,
+            rectangles: []
         }
         
         setArt(cleared)
@@ -105,6 +114,9 @@ export const Artwork = () => {
                 </div>
                 <div id="seperator">&nbsp;</div>
             </form>  
+            <StoreContext.Provider value={store}>   
+                <Solution />
+            </StoreContext.Provider>
         </>
     )
 };

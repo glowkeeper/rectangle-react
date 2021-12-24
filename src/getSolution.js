@@ -4,6 +4,8 @@
  * corners on subsequent lines constitutes a rectangle
  */
 
+import { StoreActions } from './store'
+
 /*
 * split string into an array of lines
 */
@@ -224,11 +226,20 @@ const getRectanglesHTML = (art, foundRectangles, corner, colour) => {
           +-+          +-+          +-+
 */
 
-export const foundRectangles = (asciiArt, corner, colour) => {
-  const thisArt = getLines(asciiArt)
-  const newArt = padLines(thisArt)
-  const rectangles = getRectangles(getTuples(findIndices(newArt, corner)))
-  const rectanglesHTML = getRectanglesHTML(newArt, rectangles, corner, colour)
-  return rectanglesHTML
+export const GetRectangles = async (dispatch, userHasSubmitted, asciiArt, corner, colour) => {
+  const thisArt = await getLines(asciiArt)
+  const newArt = await padLines(thisArt)
+  const rectangles = await getRectangles(getTuples(findIndices(newArt, corner)))
+  const rectanglesHTML = await getRectanglesHTML(newArt, rectangles, corner, colour)
+  dispatch({
+    type: StoreActions.update,
+    payload: { 
+      userHasSubmitted: userHasSubmitted,
+      asciiArt: asciiArt,
+      corner: corner,
+      colour: colour,
+      rectangles: rectanglesHTML
+    }
+  })
 } 
 
