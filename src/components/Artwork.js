@@ -7,8 +7,7 @@ import { Solution } from './Solution'
 import { findRectangles } from '../getSolution'
 
 import { 
-    StoreContext, 
-    StoreActions, 
+    StoreContext,
     rootReducer,
     initialState, 
     useReducerWithThunk 
@@ -29,10 +28,10 @@ export const Artwork = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setHasSubmitted(true)
-        store.dispatch({
+        /*store.dispatch({
             type: StoreActions.init,
             payload: {}
-        })
+        })*/
         store.dispatch(
             findRectangles(store.dispatch, art.asciiArt, art.corner, art.colour)
         )

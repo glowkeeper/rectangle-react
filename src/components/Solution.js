@@ -14,25 +14,7 @@ const initialState = {
 
 export const Solution = () => {
     const store = useContext(StoreContext)
-    const [solutions, setSolutions ] = useState(initialState)
-
-    useEffect(() => {
-
-        if (!store.state.hasInitialised && !store.state.hasInitialised) {
-            return (solutions) => {
-                setSolutions({...initialState})
-            }
-        }
-    }, [store])
-
-    useEffect(() => {
-
-        if (store.state.hasInitialised) {
-            return (solutions) => {
-                setSolutions({...initialState, hasInitialised: true})
-            }
-        }
-    }, [store])
+    const [solutions, setSolutions] = useState(initialState)
 
     useEffect(() => {
 
@@ -78,14 +60,10 @@ export const Solution = () => {
                         {solutions.rectangles}
                     </div>
                 </>
-            ) : (
-                <>
-                    { solutions.hasInitialised && (                    
-                        <div id="spinner">
-                            <div className="spinner-2">&nbsp;</div>
-                        </div>
-                    )}
-                </>
+            ) : (                                    
+                <div id="spinner">
+                    <div className="spinner-2">&nbsp;</div>
+                </div>
             )}
         </>
     )
