@@ -20,6 +20,7 @@ export class UIText {
 
     static buttonSubmit = "submit"
     static buttonClear = "clear"
+    static buttonInit = "init"
 
     static outputSolutions = "number of solutions"
 }

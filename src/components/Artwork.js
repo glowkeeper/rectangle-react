@@ -52,7 +52,7 @@ export const Artwork = () => {
         setArt({...art, colour: colour.hex})
     }
 
-    const handleClick = (event) => {
+    const handleClickClear = (event) => {
         event.preventDefault();
         
         const reset = {
@@ -65,11 +65,19 @@ export const Artwork = () => {
         }
         
         setArt(reset)
-
-        store.dispatch({
+        
+        /*store.dispatch({
             type: StoreActions.reset,
             payload: reset
-        })        
+        })*/
+        if (hasSubmitted) setHasSubmitted(false)
+
+    }
+
+    const handleClickInit = (event) => {        
+        event.preventDefault();       
+        setArt(initialState)
+        if (hasSubmitted) setHasSubmitted(false)   
     }
 
     return (
@@ -115,7 +123,8 @@ export const Artwork = () => {
                         </div>
                         <div id="form-buttons">
                             <button type="submit">{UIText.buttonSubmit}</button>
-                            <button onClick={handleClick}>{UIText.buttonClear}</button> 
+                            <button onClick={handleClickClear}>{UIText.buttonClear}</button> 
+                            <button onClick={handleClickInit}>{UIText.buttonInit}</button> 
                         </div>
                     </div>
                 </div>
