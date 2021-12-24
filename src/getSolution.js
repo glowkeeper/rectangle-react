@@ -226,7 +226,7 @@ const getRectanglesHTML = (art, foundRectangles, corner, colour) => {
           +-+          +-+          +-+
 */
 
-export const findRectangles = async (dispatch, userHasSubmitted, asciiArt, corner, colour) => {
+export const findRectangles = async (dispatch, asciiArt, corner, colour) => {
   const thisArt = await getLines(asciiArt)
   const newArt = await padLines(thisArt)
   const rectangles = await getRectangles(getTuples(findIndices(newArt, corner)))
@@ -234,7 +234,8 @@ export const findRectangles = async (dispatch, userHasSubmitted, asciiArt, corne
   dispatch({
     type: StoreActions.update,
     payload: { 
-      userHasSubmitted: userHasSubmitted,
+      hasInitialised: false,
+      hasSolution: true,
       asciiArt: asciiArt,
       corner: corner,
       colour: colour,

@@ -19,6 +19,7 @@ import { UIText } from '../config'
 export const Artwork = () => {
     const [state, dispatch] = useReducerWithThunk(rootReducer, initialState)
     const [art, setArt] = useState(initialState)
+    const [hasSubmitted, setHasSubmitted] = useState(false)
 
     const store = useMemo(() => {
         return { state: state, dispatch: dispatch }
@@ -27,10 +28,13 @@ export const Artwork = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const userHasSubmitted = true;
-
+        setHasSubmitted(true)
+        store.dispatch({
+            type: StoreActions.init,
+            payload: {}
+        })
         store.dispatch(
-            findRectangles(store.dispatch, userHasSubmitted, art.asciiArt, art.corner, art.colour)
+            findRectangles(store.dispatch, art.asciiArt, art.corner, art.colour)
         )
     }
 
@@ -38,30 +42,33 @@ export const Artwork = () => {
         const name = event.target.name
         const value = event.target.value
 
+        if (hasSubmitted) setHasSubmitted(false)
         setArt({...art, [name]: value})
     }
 
     const handleChangeColour = (colour) => {
         // console.log('my colour', colour)
+        if (hasSubmitted) setHasSubmitted(false)
         setArt({...art, colour: colour.hex})
     }
 
     const handleClick = (event) => {
         event.preventDefault();
-
-        const cleared = {
-            userHasSubmitted: false,
+        
+        const reset = {
+            hasInitialised: false,
+            hasSolution: false,
             asciiArt: "",
             corner: "",
             colour: initialState.colour,
             rectangles: []
         }
         
-        setArt(cleared)
+        setArt(reset)
 
         store.dispatch({
-            type: StoreActions.update,
-            payload: cleared
+            type: StoreActions.reset,
+            payload: reset
         })        
     }
 
@@ -113,10 +120,12 @@ export const Artwork = () => {
                     </div>
                 </div>
                 <div id="seperator">&nbsp;</div>
-            </form>  
-            <StoreContext.Provider value={store}>   
-                <Solution />
-            </StoreContext.Provider>
+            </form>
+            { hasSubmitted && (
+                <StoreContext.Provider value={store}>   
+                    <Solution />
+                </StoreContext.Provider>
+            )}
         </>
     )
 };

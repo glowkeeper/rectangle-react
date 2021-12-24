@@ -4,7 +4,7 @@ body {
   margin: 2rem;
   
   height: 100vh;
-  background-color: rgba(237, 238, 226, 0.904);
+  background-color: #fff3e0
 }
 
 header {
@@ -118,6 +118,22 @@ input {
   border-radius: 5px;
   border: 1px solid rgb(124, 120, 120);
 }
+
+#spinner {
+  display: grid;
+  place-items: start center;
+}
+
+.spinner-2 {
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:8px solid;
+  border-color:#ffffff;
+  border-right-color: #ccc0ae;
+  animation:s2 1s infinite linear;
+}
+@keyframes s2 {to{transform: rotate(1turn)}}
 
 @media screen and (max-width: 600px) {
 
