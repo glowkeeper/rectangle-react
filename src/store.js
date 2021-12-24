@@ -29,7 +29,7 @@ export const useReducerWithThunk = (reducer, initialState) => {
 
   const customDispatch = (action) => {
     if (typeof action === 'function') {
-        action(customDispatch);
+        action();
     } else {
         dispatch(action); 
     }
