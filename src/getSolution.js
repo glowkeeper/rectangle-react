@@ -226,7 +226,7 @@ const getRectanglesHTML = (art, foundRectangles, corner, colour) => {
           +-+          +-+          +-+
 */
 
-export const GetRectangles = async (dispatch, userHasSubmitted, asciiArt, corner, colour) => {
+export const findRectangles = async (dispatch, userHasSubmitted, asciiArt, corner, colour) => {
   const thisArt = await getLines(asciiArt)
   const newArt = await padLines(thisArt)
   const rectangles = await getRectangles(getTuples(findIndices(newArt, corner)))

@@ -4,7 +4,7 @@ import { CompactPicker } from 'react-color'
 
 import { Solution } from './Solution'
 
-import { GetRectangles } from '../getSolution'
+import { findRectangles } from '../getSolution'
 
 import { 
     StoreContext, 
@@ -30,7 +30,7 @@ export const Artwork = () => {
         const userHasSubmitted = true;
 
         store.dispatch(
-            GetRectangles(store.dispatch, userHasSubmitted, art.asciiArt, art.corner, art.colour)
+            findRectangles(store.dispatch, userHasSubmitted, art.asciiArt, art.corner, art.colour)
         )
     }
 
