@@ -30,7 +30,6 @@ export const Solution = () => {
                 columnWidth: `${asciiArt[0].length}ch`,
                 rectangles: myRectangles
             }
-            console.log('myInfo', mySolutions.rowHeight, mySolutions.columnWidth)
             timer = setTimeout(() => {
                 setSolutions(mySolutions)
             }, 1000)
