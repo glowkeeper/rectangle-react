@@ -19,12 +19,8 @@ export const Solution = () => {
     useEffect(() => {
 
         let timer
-        if ( store.state.hasSolution ) {  
-            const myRectangles = store.state.rectangles.map((rectangle, index) => {
-                return (        
-                    <div key={index} className="ascii-solution" dangerouslySetInnerHTML={{__html: rectangle}} />
-                )
-            })
+        if ( store.state.hasSolution ) {
+            const myRectangles = store.state.rectangles
             const asciiArt = store.state.asciiArt.split(/\n/);
             const mySolutions = {
                 hasInitialised: false,
@@ -34,6 +30,7 @@ export const Solution = () => {
                 columnWidth: `${asciiArt[0].length}ch`,
                 rectangles: myRectangles
             }
+            console.log('myInfo', mySolutions.rowHeight, mySolutions.columnWidth)
             timer = setTimeout(() => {
                 setSolutions(mySolutions)
             }, 1000)
@@ -42,14 +39,14 @@ export const Solution = () => {
         return () => {
             clearTimeout(timer)
         }
-    }, [store])    
+    }, [store])
 
     return (
         <>
             { solutions.hasSolution ? (
                 <>
                     <p id="solutions">{UIText.outputSolutions}: {solutions.numSolutions}</p>
-                    <div 
+                    <div
                         style={{
                             display: 'grid',
                             gridTemplateColumns: `repeat(auto-fit, minmax(${solutions.columnWidth}, 1fr))`,
@@ -57,10 +54,14 @@ export const Solution = () => {
                             gap: '8px',
                         }}
                     >
-                        {solutions.rectangles}
+                      {solutions.rectangles.map((rectangle, index) => {
+                        return (
+                          <div key={index} className="ascii-solution" dangerouslySetInnerHTML={{__html: rectangle}} />
+                        )
+                      })}
                     </div>
                 </>
-            ) : (                                    
+            ) : (
                 <div id="spinner">
                     <div className="spinner-2">&nbsp;</div>
                 </div>
