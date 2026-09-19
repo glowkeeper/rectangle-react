@@ -1,0 +1,53 @@
+name: Parent outcome
+description: Define a meaningful outcome delivered through multiple child issues.
+title: ""
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Describe the player or project outcome, not a list of tasks.
+      placeholder: When this is complete...
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Explain whose need this serves and why it matters now.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Parent-level acceptance criteria
+      description: List observable conditions proving the whole outcome is delivered.
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Boundaries
+      description: State constraints and anything deliberately outside this outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Proposed independent deliverables
+      description: Identify at least two possible children to create separately.
+      placeholder: |-
+        - Deliverable one
+        - Deliverable two
+    validations:
+      required: true
+  - type: checkboxes
+    id: structure
+    attributes:
+      label: Structure check
+      options:
+        - label: This outcome needs at least two independently deliverable children.
+          required: true
+        - label: This outcome is not intended to be implemented by one pull request.
+          required: true

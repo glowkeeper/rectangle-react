@@ -1,0 +1,56 @@
+name: Standalone change
+description: Define a coherent one-off that does not belong to a parent outcome.
+title: ""
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: State the independently deliverable change in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Explain why this change exists and its constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why this is standalone
+      description: Explain why this does not naturally contribute to a parent outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable conditions distinguishing completion from partial work.
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Explain how the criteria will be checked.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List blocking issues or decisions, or write None.
+    validations:
+      required: true
+  - type: checkboxes
+    id: structure
+    attributes:
+      label: Structure check
+      options:
+        - label: This is an independently deliverable one-off, not an acceptance criterion.
+          required: true
+        - label: This change is sized XS to L.
+          required: true
