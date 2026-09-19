@@ -54,13 +54,19 @@ and standalone issues are genuine one-offs. Children do not have children.
 ## Implementation boundaries
 
 - Keep rectangle detection pure and independent of React, browser APIs, and
-  persistence.
-- Keep the initial game local-first, static-hostable, and account-free.
-- Preserve text as a first-class representation even if the game gains a more
-  graphical editing surface.
-- Keep game rules and level definitions separate from presentation.
-- Do not add a backend, accounts, analytics, advertising, global rankings, or
-  user-generated content services without a new agreed architectural decision.
+  presentation.
+- Keep ordinary play local-first, static-hostable, and account-free. Do not
+  introduce a required backend or remote service without an agreed
+  architectural change.
+- Build the agreed Rectangle Hunt loop: a fixed board, opposite-corner
+  selection, recorded discoveries, a hidden total, and completion when every
+  rectangle has been found.
+- Keep player-session rules separate from React components.
+- Use one coordinate identity for solver results, found rectangles, duplicate
+  detection, review, and completion.
+- Do not reveal unfound rectangles or the final total during play.
+- Provide equivalent pointer, touch, and keyboard selection.
+- Do not rely on colour alone to communicate rectangle state.
 - Prefer clear data and explicit state transitions over clever abstractions.
 
 ## Branches and pull requests

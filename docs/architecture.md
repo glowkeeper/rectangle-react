@@ -2,94 +2,92 @@
 
 ## Purpose
 
-Rectangles is currently a static React application that accepts an ASCII board,
-finds every valid rectangle, and lets the player inspect results. This document
-records the technical foundation that future game work should preserve unless
-an issue explicitly changes it.
+Rectangles is a React and Vite application built around a pure rectangle
+engine. The target game presents a fixed board and lets the player find every
+rectangle by selecting opposite corners.
 
 ## Runtime boundary
 
-The application is built with React and Vite and is deployable as static files.
-Ordinary play is local-first and requires no account, API, database, or server.
-Browser storage may later preserve local progress when an agreed issue defines
-the data and lifecycle.
-
-Adding a backend, remote persistence, telemetry, user accounts, or public
-content changes the product's privacy and operational model and requires an
-explicit architecture decision.
+Ordinary play is local-first, static-hostable, and account-free. The game must
+not require an API, database, backend, or remote service to function. Changing
+that boundary requires an explicit architectural decision.
 
 ## Rectangle engine
 
-`src/getSolution.js` is the domain boundary for rectangle detection.
+`src/getSolution.js` is the rules boundary.
 
-- Input is text plus the selected corner character.
+- Input is board text plus the selected corner character.
 - Output is rectangle coordinates: `{ top, left, bottom, right }`.
 - The engine returns data, never HTML or React elements.
-- Horizontal and vertical runs are labelled once, after which compatible sides
-  are combined in `O(rows² × columns + rectangles)` time.
+- Horizontal and vertical runs are labelled once; compatible sides are then
+  combined in `O(rows² × columns + rectangles)` time.
 - Board and result limits protect the browser from pathological input.
 
-The engine must remain deterministic and independently testable. UI state,
-animation, persistence, scoring, and level progression do not belong in it.
+The engine is deterministic and independently testable. React presentation and
+player-session state do not belong in it.
 
-## Application layers
+## Game state
+
+The Rectangle Hunt session needs:
+
+- the fixed board;
+- the complete rectangle set produced by the engine;
+- the set of rectangles found by the player;
+- an optional first selected corner;
+- an optional focused rectangle for reviewing discoveries.
+
+A rectangle is identified by its four coordinates. Found rectangles are stored
+as a set so the same rectangle cannot be counted twice. Completion is derived
+by comparing the found set with the engine's complete set; the hidden total is
+not exposed by the interface before completion.
 
 The intended separation is:
 
 ```text
-level or workshop input
-        ↓
-pure board and objective rules
-        ↓
-session state and player actions
-        ↓
-React presentation and feedback
+fixed board
+    ↓
+pure rectangle engine
+    ↓
+Rectangle Hunt session state
+    ↓
+React board, selection, highlight, and feedback
 ```
 
-The current `Artwork` component owns the editable draft and last submitted
-result. `Solution` renders one board and navigates detected rectangles. Game
-work may replace this small arrangement with an explicit session model, but it
-should not put rules into React components.
+## Selection
 
-## Level data
+The player selects two diagonally opposite corners. The session normalises
+their order into `{ top, left, bottom, right }` and checks that coordinate key
+against the engine result set.
 
-The level contract has not yet been agreed. When defined, it should be plain,
-versionable data with stable identifiers and explicit objectives. Level rules
-must be testable without rendering the interface. Saved progress should refer
-to stable level identifiers rather than array positions.
+A valid new key is added to the found set. An existing key focuses that
+rectangle without adding it again. An invalid key produces temporary feedback
+without changing the found set. Input adapters for pointer, touch, and keyboard
+must invoke the same selection action.
 
 ## Rendering and safety
 
-User-authored board text is rendered through React text nodes. Do not construct
-HTML from board content or introduce `dangerouslySetInnerHTML`. Rectangle
-coordinates select presentation; they do not rewrite the source board.
+Board text is rendered through React text nodes. Do not construct HTML from
+board content or introduce `dangerouslySetInnerHTML`. Coordinates control
+presentation without rewriting the board.
 
-Colour may reinforce state but must not be its only signal. Interactive cells
-and controls must retain keyboard semantics and visible focus.
+The fixed drawing must remain legible as rectangles overlap. Candidate, newest,
+previously found, and focused states need structural or textual distinctions in
+addition to colour. Interactive corners and controls need visible focus and
+meaningful accessible names.
 
 ## Performance boundaries
 
-The current limits are defined with the solver and covered by tests. Changes to
-board dimensions, maximum rectangle count, or result representation require
-performance evidence and corresponding test updates. The result view renders
-one board rather than one complete board per rectangle.
+The solver limits and performance tests remain the computational boundary. The
+interface renders one board, not one complete board per rectangle. Adding a
+rectangle to the found set and checking completion should use coordinate keys
+rather than repeatedly searching coordinate objects.
 
-## Testing and verification
+## Verification
 
-- Canonical and regression tests protect rectangle rules.
-- Performance tests protect agreed solver limits.
-- Component tests protect safe rendering and interaction state.
-- Production builds verify the deployable application.
-- Layout, keyboard, touch, accessibility, and game feel require rendered
-  browser verification proportionate to the issue.
-
-## Explicitly unsettled
-
-The following need their own agreed issues before implementation:
-
-- the precise player interaction for editing cells;
-- the level and objective schema;
-- progression, scoring, hints, and persistence;
-- visual and audio identity;
-- authored versus generated content boundaries;
-- hosting and release arrangements beyond the existing static deployment.
+- Canonical and regression tests protect rectangle detection.
+- Session tests should cover valid, invalid, duplicate, and completing finds.
+- Component tests should cover safe rendering and selection feedback.
+- Browser checks should exercise corner selection and discovery review with
+  pointer, touch-sized controls, and keyboard.
+- Accessibility review should confirm visible focus, understandable status
+  updates, and colour-independent state.
