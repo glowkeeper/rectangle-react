@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes } from "react-router"
-import { Link } from "react-router-dom"
+import { Link, Route, Routes } from "react-router-dom"
 
 import { Artwork } from './Artwork'
 import { About } from './About'
@@ -20,7 +19,7 @@ export const App = () => {
     return (    
         <>
             <header>
-                <div dangerouslySetInnerHTML={{__html: UIText.appTitle}} />
+                <pre><h1>{UIText.appTitle}</h1></pre>
                 <nav>
                     <Link to={LocalRoutes.home}>{UIText.linkHome}</Link>
                     <Link to={LocalRoutes.about}>{UIText.linkAbout}</Link>

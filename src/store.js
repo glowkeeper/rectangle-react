@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React from 'react'
 
 export const StoreContext = React.createContext()
 
@@ -29,18 +29,4 @@ export const initialState = {
   corner: "+",
   colour: "#ff0000",
   rectangles: [],
-}
-
-export const useReducerWithThunk = (reducer, initialState) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const customDispatch = (action) => {
-    if (typeof action === 'function') {
-        action();
-    } else {
-        dispatch(action); 
-    }
-  };
-  
-  return [state, customDispatch];
 }

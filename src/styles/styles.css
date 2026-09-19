@@ -90,6 +90,12 @@ input {
   grid-gap: 5px;
 }
 
+#board-error {
+  grid-column: 2;
+  margin: 0;
+  color: #a40000;
+}
+
 #input-corner,
 #input-colour {
   display: grid;
@@ -178,5 +184,4 @@ input {
     border: none;
   }
 }
-
 

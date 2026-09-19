@@ -4,18 +4,17 @@
  * corners on subsequent lines constitutes a rectangle
  */
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom"
 
 import { App } from './components/App'
 
 import './styles/styles.css'
 
-ReactDOM.render(
+createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <React.StrictMode>
       <App />
     </React.StrictMode>
-  </BrowserRouter>,
-  document.getElementById('root')
+  </BrowserRouter>
 )

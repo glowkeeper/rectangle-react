@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useReducer } from 'react'
 
 import { CompactPicker } from 'react-color'
 
@@ -8,17 +8,18 @@ import { findRectangles } from '../getSolution'
 
 import { 
     StoreContext,
+    StoreActions,
     rootReducer,
-    initialState, 
-    useReducerWithThunk 
+    initialState
 } from '../store'
 
 import { UIText } from '../config'
 
 export const Artwork = () => {
-    const [state, dispatch] = useReducerWithThunk(rootReducer, initialState)
+    const [state, dispatch] = useReducer(rootReducer, initialState)
     const [art, setArt] = useState(initialState)
     const [hasSubmitted, setHasSubmitted] = useState(false)
+    const [error, setError] = useState('')
 
     const store = useMemo(() => {
         return { state: state, dispatch: dispatch }
@@ -27,14 +28,27 @@ export const Artwork = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setHasSubmitted(true)
-        /*store.dispatch({
-            type: StoreActions.init,
-            payload: {}
-        })*/
-        store.dispatch(
-            findRectangles(store.dispatch, art.asciiArt, art.corner, art.colour)
-        )
+
+        try {
+            const rectangles = findRectangles(art.asciiArt, art.corner)
+
+            dispatch({
+                type: StoreActions.update,
+                payload: {
+                    hasInitialised: false,
+                    hasSolution: true,
+                    asciiArt: art.asciiArt,
+                    corner: art.corner,
+                    colour: art.colour,
+                    rectangles
+                }
+            })
+            setError('')
+            setHasSubmitted(true)
+        } catch (submitError) {
+            setError(submitError.message)
+            setHasSubmitted(false)
+        }
     }
 
     const handleChangeInput = (event) => {
@@ -42,12 +56,14 @@ export const Artwork = () => {
         const value = event.target.value
 
         if (hasSubmitted) setHasSubmitted(false)
+        if (error) setError('')
         setArt({...art, [name]: value})
     }
 
     const handleChangeColour = (colour) => {
         // console.log('my colour', colour)
         if (hasSubmitted) setHasSubmitted(false)
+        if (error) setError('')
         setArt({...art, colour: colour.hex})
     }
 
@@ -65,11 +81,8 @@ export const Artwork = () => {
         
         setArt(reset)
         
-        /*store.dispatch({
-            type: StoreActions.reset,
-            payload: reset
-        })*/
         if (hasSubmitted) setHasSubmitted(false)
+        if (error) setError('')
 
     }
 
@@ -77,6 +90,7 @@ export const Artwork = () => {
         event.preventDefault();       
         setArt(initialState)
         if (hasSubmitted) setHasSubmitted(false)   
+        if (error) setError('')
     }
 
     return (
@@ -95,7 +109,12 @@ export const Artwork = () => {
                             required
                             autoFocus
                             onChange={handleChangeInput}
+                            aria-invalid={Boolean(error)}
+                            aria-describedby={error ? 'board-error' : undefined}
                         />
+                        {error && (
+                            <p id="board-error" role="alert">{error}</p>
+                        )}
                     </div>
                     <div id="info">
                         <div id="input-corner">

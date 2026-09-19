@@ -2,46 +2,31 @@
   "name": "rectangles-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://glowkeeper.github.io/rectangle-react",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^17.0.2",
+    "react": "^19.3.0",
     "react-color": "^2.19.3",
-    "react-dom": "^17.0.2",
-    "react-router": "^6.2.1",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
-    "web-vitals": "^2.1.2"
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "vite",
+    "start": "vite",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "deploy": "gh-pages -d dist",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "gh-pages": "^3.2.3"
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "gh-pages": "^6.3.0",
+    "jsdom": "^29.1.1",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  },
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   }
 }

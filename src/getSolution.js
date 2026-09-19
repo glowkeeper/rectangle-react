@@ -1,246 +1,136 @@
-/*
- * solution to https://exercism.org/tracks/javascript/exercises/rectangles
- * this solution is based on the idea that matching
- * corners on subsequent lines constitutes a rectangle
- */
+export const BOARD_LIMITS = Object.freeze({
+  maxRows: 50,
+  maxColumns: 120,
+  maxCells: 3000,
+  maxRectangles: 10000,
+})
 
-import { StoreActions } from './store'
+const getLines = (asciiArt) => asciiArt === '' ? [] : asciiArt.split(/\r?\n/)
 
-/*
-* split string into an array of lines
-*/
-const getLines = (asciiArt) => asciiArt.split(/\n/);
+export const validateBoard = (asciiArt) => {
+  const lines = getLines(asciiArt)
+  const columns = lines.reduce((maximum, line) => {
+    return Math.max(maximum, line.length)
+  }, 0)
+  const cells = lines.length * columns
 
-/* 
-* find longest line
-*/
-const getMaxLineLength = (lines) => {
-  let initialValue = 0
-  if (lines.length) initialValue = lines[0].length
-  const max = lines.reduce((previous, current) => {
-    return previous >= current.length ? previous : current.length
-  }, initialValue)
-  return max
-} 
+  if (lines.length > BOARD_LIMITS.maxRows) {
+    throw new RangeError(`Artwork cannot exceed ${BOARD_LIMITS.maxRows} rows.`)
+  }
 
-/* 
-* ensure all lines are the same length
-* by padding short lines with ' '
-* (doing this ensures getCharHTML, used later, does the right thing ;) )
-*/
-const padLines = (lines) => {
-  const maxLineLength = getMaxLineLength(lines)
-  const newLines = lines.map(line => line.padEnd(maxLineLength, ' '))
-  return newLines
+  if (columns > BOARD_LIMITS.maxColumns) {
+    throw new RangeError(`Artwork cannot exceed ${BOARD_LIMITS.maxColumns} columns.`)
+  }
+
+  if (cells > BOARD_LIMITS.maxCells) {
+    throw new RangeError(`Artwork cannot exceed ${BOARD_LIMITS.maxCells} cells.`)
+  }
+
+  return lines
 }
 
-/*
-* find index of 'corner' for each line
-* and remove all lines with only 0 or 1 'corner'
-*/
-const findIndices = (lines, corner) => {
-  return lines.map((line) => {
-      let thisIndices = [];
-      for (let i = 0; i < line.length; i++) {
-      if (line[i] === corner) thisIndices.push(i);
+const padLines = (lines) => {
+  const width = lines.reduce((maximum, line) => {
+    return Math.max(maximum, line.length)
+  }, 0)
+
+  return lines.map((line) => line.padEnd(width, ' '))
+}
+
+const createRunGrid = (rows, columns) => {
+  return Array.from({ length: rows }, () => Array(columns).fill(0))
+}
+
+const labelHorizontalRuns = (lines, corner) => {
+  const columns = lines[0]?.length ?? 0
+  const runs = createRunGrid(lines.length, columns)
+  let nextRun = 1
+
+  for (let row = 0; row < lines.length; row += 1) {
+    let currentRun = 0
+
+    for (let column = 0; column < columns; column += 1) {
+      const character = lines[row][column]
+
+      if (character !== '-' && character !== corner) {
+        currentRun = 0
+        continue
       }
-      return thisIndices;
-  });
-};
 
-/*
-* make pairs out of all the indices
-* for example, if we have the indices "0236",
-* we should get the following pairs:
-* [0,2], [0,3], [0,6], [2,3], [2,6], [3,6]
-*/
-const getTuples = (indices, tuples = []) => {
-  //console.log("my indices", indices);
-  if (!indices.length) {
-      return tuples;
-  } else {
-      let tuple = [];
-      const myLine = indices[0];
-      //console.log("my line", myLine);
-      for (let i = 0; i < myLine.length; i++) {
-      for (let j = i + 1; j < myLine.length; j++) {
-          tuple.push(`${myLine[i]},${myLine[j]}`);
+      if (currentRun === 0) {
+        currentRun = nextRun
+        nextRun += 1
       }
-      }
-      tuples.push(tuple);
-      return getTuples(indices.slice(1), tuples);
-  }
-};
 
-/*
-* for each line of pairs
-* see if there's a matching pair on subsequent lines
-*
-* given:
-*    +--+
-*   ++  |
-* +-++--+
-* |  |  |
-* +--+--+
-*
-* the returned 'rectangles' object will be of the form:
-*
-* {
-*   0: {
-*     2: ['36'],
-*     4: ['36']
-*   },
-*   1: {
-*     2: ['23']
-*   },
-*   2: {
-*     4: ['03', '06', '36']
-*   }
-* }
-*/
-const getRectangles = (tuples) => {
-  const rectangles = {};
-  for (let i = 0; i < tuples.length; i++) {
-      const iTuples = tuples[i];
-      if (iTuples) {
-      for (let j = i + 1; j < tuples.length; j++) {
-          const jTuples = tuples[j];
-          // find the intersection of the 2 arrays
-          const thisRectangle = iTuples.filter((value) =>
-          jTuples.includes(value)
-          );
-          if (thisRectangle.length) {
-          if (!rectangles.hasOwnProperty(i)) rectangles[`${i}`] = {};
-          rectangles[`${i}`][`${j}`] = thisRectangle;
-          }
-      }
-      }
-  }
-  return rectangles;
-};
-
-/*
-* outputs the html code for a space, if necessary
-*/
-const getCharHTML = (char, doColour, corner ) => {
-  if ( doColour ) {
-    return corner
-  } else if (char === " ") {
-    return "&nbsp;";
-  }
-  return char;
-};
-
-/*
-* colours the found rectangle
-*/
-const getRectangleHTML = (art, firstRow, lastRow, xCoord, yCoord, corner, colour) => {
-  let thisHTML = "<pre>";
-  let isFound, doColour = false;
-  for (let i = 0; i < art.length; i++) {
-      const thisLine = art[i];
-      if (i === firstRow) isFound = true;
-      for (let j = 0; j < thisLine.length; j++) {
-        if (j === xCoord && isFound) {
-          thisHTML += `<span style="color:${colour}">`;
-          doColour = true;
-        }
-        thisHTML += getCharHTML(thisLine[j], doColour, corner);
-        if (j === yCoord && isFound) {
-          thisHTML += "</span>";
-          doColour = false;
-        }
-      }
-      if (i === lastRow) isFound = false;
-      thisHTML += "<br/>";
-  }
-  thisHTML += "</pre>";
-  return thisHTML;
-};
-
-/*
-* creates the found rectangle's base row, last row
-* and the x and y cordinates of its corners
-*/
-const getRectanglesHTML = (art, foundRectangles, corner, colour) => {
-  let rectangleHTML = [];
-  for (let i = 0; i < art.length; i++) {
-      if (foundRectangles.hasOwnProperty(i)) {
-        const baseRow = Number(i);
-        const myMatches = Object.keys(foundRectangles[`${baseRow}`]);
-        for (let j = 0; j < myMatches.length; j++) {
-            const thisRow = Number(myMatches[`${j}`]);
-            const thisCorners = foundRectangles[`${baseRow}`][`${thisRow}`];
-            for (let k = 0; k < thisCorners.length; k++) {
-              const coords = thisCorners[k].split(",");
-              const xCoord = Number(coords[0]);
-              const yCoord = Number(coords[1]);
-              const thisHTML = getRectangleHTML(
-                  art,
-                  baseRow,
-                  thisRow,
-                  xCoord,
-                  yCoord, 
-                  corner,
-                  colour
-              );
-              rectangleHTML.push(thisHTML);
-            }
-        }
-      }
-  }
-  return rectangleHTML;
-};
-
-/*
-   +--+
-  ++  |
-+-++--+
-|  |  |
-+--+--+
-
-+---+--+----+
-|   +--+----+
-+---+--+    |
-|   +--+----+
-+---+--+--+-+
-+---+--+--+-+
-+------+  | |
-          +-+
-
-+---+--+----++---+--+----++---+--+----+
-|   +--+----+|   +--+----+|   +--+----+
-+---+--+    |+---+--+    |+---+--+    |
-|   +--+----+|   +--+----+|   +--+----+
-+---+--+--+-++---+--+--+-++---+--+--+-+
-+---+--+--+-++---+--+--+-++---+--+--+-+
-+------+  | |+------+  | |+------+  | |
-          +-+          +-+          +-+
-+---+--+----++---+--+----++---+--+----+
-|   +--+----+|   +--+----+|   +--+----+
-+---+--+    |+---+--+    |+---+--+    |
-|   +--+----+|   +--+----+|   +--+----+
-+---+--+--+-++---+--+--+-++---+--+--+-+
-+---+--+--+-++---+--+--+-++---+--+--+-+
-+------+  | |+------+  | |+------+  | |
-          +-+          +-+          +-+
-*/
-
-export const findRectangles = async (dispatch, asciiArt, corner, colour) => {
-  const thisArt = await getLines(asciiArt)
-  const newArt = await padLines(thisArt)
-  const rectangles = await getRectangles(getTuples(findIndices(newArt, corner)))
-  const rectanglesHTML = await getRectanglesHTML(newArt, rectangles, corner, colour)
-  dispatch({
-    type: StoreActions.update,
-    payload: { 
-      hasInitialised: false,
-      hasSolution: true,
-      asciiArt: asciiArt,
-      corner: corner,
-      colour: colour,
-      rectangles: rectanglesHTML
+      runs[row][column] = currentRun
     }
-  })
-} 
+  }
 
+  return runs
+}
+
+const labelVerticalRuns = (lines, corner) => {
+  const columns = lines[0]?.length ?? 0
+  const runs = createRunGrid(lines.length, columns)
+  let nextRun = 1
+
+  for (let column = 0; column < columns; column += 1) {
+    let currentRun = 0
+
+    for (let row = 0; row < lines.length; row += 1) {
+      const character = lines[row][column]
+
+      if (character !== '|' && character !== corner) {
+        currentRun = 0
+        continue
+      }
+
+      if (currentRun === 0) {
+        currentRun = nextRun
+        nextRun += 1
+      }
+
+      runs[row][column] = currentRun
+    }
+  }
+
+  return runs
+}
+
+export const findRectangles = (asciiArt, corner = '+') => {
+  const lines = padLines(validateBoard(asciiArt))
+  const rectangles = []
+  const columns = lines[0]?.length ?? 0
+  const horizontalRuns = labelHorizontalRuns(lines, corner)
+  const verticalRuns = labelVerticalRuns(lines, corner)
+
+  for (let top = 0; top < lines.length; top += 1) {
+    for (let bottom = top + 1; bottom < lines.length; bottom += 1) {
+      const leftColumnsByRuns = new Map()
+
+      for (let right = 0; right < columns; right += 1) {
+        if (lines[top][right] !== corner) continue
+        if (lines[bottom][right] !== corner) continue
+        if (verticalRuns[top][right] !== verticalRuns[bottom][right]) continue
+
+        const runKey = `${horizontalRuns[top][right]}:${horizontalRuns[bottom][right]}`
+        const leftColumns = leftColumnsByRuns.get(runKey) ?? []
+
+        for (const left of leftColumns) {
+          if (rectangles.length === BOARD_LIMITS.maxRectangles) {
+            throw new RangeError(
+              `Artwork cannot contain more than ${BOARD_LIMITS.maxRectangles} rectangles.`
+            )
+          }
+
+          rectangles.push({ top, left, bottom, right })
+        }
+
+        leftColumns.push(right)
+        leftColumnsByRuns.set(runKey, leftColumns)
+      }
+    }
+  }
+
+  return rectangles
+}
