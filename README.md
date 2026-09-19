@@ -2,8 +2,8 @@
 
 Rectangles is evolving from a React exploration of the
 [Exercism rectangles problem](https://exercism.org/tracks/javascript/exercises/rectangles)
-into a tactile puzzle game about the surprising consequences of simple
-drawn lines.
+into **Rectangle Hunt**, a visual-search game about finding every rectangle
+hidden in a fixed line drawing.
 
 The current application accepts an ASCII board, identifies every complete
 rectangle, and lets the player inspect them individually. Its rectangle engine
