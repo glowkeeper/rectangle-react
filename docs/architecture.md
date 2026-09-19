@@ -6,6 +6,12 @@ Rectangles is a React and Vite application built around a pure rectangle
 engine. The target game presents a fixed board and lets the player find every
 rectangle by selecting opposite corners.
 
+## Runtime boundary
+
+Ordinary play is local-first, static-hostable, and account-free. The game must
+not require an API, database, backend, or remote service to function. Changing
+that boundary requires an explicit architectural decision.
+
 ## Rectangle engine
 
 `src/getSolution.js` is the rules boundary.

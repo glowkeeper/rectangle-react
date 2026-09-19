@@ -55,6 +55,9 @@ and standalone issues are genuine one-offs. Children do not have children.
 
 - Keep rectangle detection pure and independent of React, browser APIs, and
   presentation.
+- Keep ordinary play local-first, static-hostable, and account-free. Do not
+  introduce a required backend or remote service without an agreed
+  architectural change.
 - Build the agreed Rectangle Hunt loop: a fixed board, opposite-corner
   selection, recorded discoveries, a hidden total, and completion when every
   rectangle has been found.
