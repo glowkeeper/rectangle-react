@@ -2,7 +2,7 @@ export const BOARD_LIMITS = Object.freeze({
   maxRows: 50,
   maxColumns: 120,
   maxCells: 3000,
-  maxRectangles: 10000,
+  maxRectangles: 1000,
 })
 
 const getLines = (asciiArt) => asciiArt === '' ? [] : asciiArt.split(/\r?\n/)

@@ -4,6 +4,15 @@ import { Artwork } from './Artwork'
 import { BOARD_LIMITS } from '../getSolution'
 
 describe('Artwork board limits', () => {
+    test('uses the native colour input', () => {
+        render(<Artwork />)
+
+        const colourInput = screen.getByLabelText('colour:')
+
+        expect(colourInput).toHaveAttribute('type', 'color')
+        expect(colourInput).toHaveValue('#ff0000')
+    })
+
     test('shows an accessible error instead of attempting an oversized board', () => {
         render(<Artwork />)
 

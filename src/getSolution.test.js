@@ -114,7 +114,7 @@ describe('board limits', () => {
   })
 
   test('stops pathological boards with too many rectangles', () => {
-    const denseBoard = Array(15).fill('+'.repeat(15)).join('\n')
+    const denseBoard = Array(9).fill('+'.repeat(9)).join('\n')
 
     expect(() => findRectangles(denseBoard)).toThrow(
       `Artwork cannot contain more than ${BOARD_LIMITS.maxRectangles} rectangles.`

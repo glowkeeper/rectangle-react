@@ -1,96 +1,62 @@
-import React, { useState, useMemo, useReducer } from 'react'
-
-import { CompactPicker } from 'react-color'
+import { useState } from 'react'
 
 import { Solution } from './Solution'
-
 import { findRectangles } from '../getSolution'
-
-import { 
-    StoreContext,
-    StoreActions,
-    rootReducer,
-    initialState
-} from '../store'
-
 import { UIText } from '../config'
 
+const initialArtwork = {
+    asciiArt: '   +--+\n  ++  |\n+-++--+\n|  |  |\n+--+--+',
+    corner: '+',
+    colour: '#ff0000',
+}
+
 export const Artwork = () => {
-    const [state, dispatch] = useReducer(rootReducer, initialState)
-    const [art, setArt] = useState(initialState)
-    const [hasSubmitted, setHasSubmitted] = useState(false)
+    const [draft, setDraft] = useState(initialArtwork)
+    const [result, setResult] = useState(null)
     const [error, setError] = useState('')
 
-    const store = useMemo(() => {
-        return { state: state, dispatch: dispatch }
-    }, [state, dispatch])
-
+    const clearResult = () => {
+        setResult(null)
+        setError('')
+    }
 
     const handleSubmit = (event) => {
-        event.preventDefault();
+        event.preventDefault()
 
         try {
-            const rectangles = findRectangles(art.asciiArt, art.corner)
+            const rectangles = findRectangles(draft.asciiArt, draft.corner)
 
-            dispatch({
-                type: StoreActions.update,
-                payload: {
-                    hasInitialised: false,
-                    hasSolution: true,
-                    asciiArt: art.asciiArt,
-                    corner: art.corner,
-                    colour: art.colour,
-                    rectangles
-                }
+            setResult({
+                asciiArt: draft.asciiArt,
+                colour: draft.colour,
+                rectangles,
             })
             setError('')
-            setHasSubmitted(true)
         } catch (submitError) {
+            setResult(null)
             setError(submitError.message)
-            setHasSubmitted(false)
         }
     }
 
     const handleChangeInput = (event) => {
-        const name = event.target.name
-        const value = event.target.value
+        const { name, value } = event.target
 
-        if (hasSubmitted) setHasSubmitted(false)
-        if (error) setError('')
-        setArt({...art, [name]: value})
+        clearResult()
+        setDraft((current) => ({ ...current, [name]: value }))
     }
 
-    const handleChangeColour = (colour) => {
-        // console.log('my colour', colour)
-        if (hasSubmitted) setHasSubmitted(false)
-        if (error) setError('')
-        setArt({...art, colour: colour.hex})
+    const handleClickClear = () => {
+        setDraft({
+            asciiArt: '',
+            corner: '',
+            colour: initialArtwork.colour,
+        })
+        clearResult()
     }
 
-    const handleClickClear = (event) => {
-        event.preventDefault();
-        
-        const reset = {
-            hasInitialised: false,
-            hasSolution: false,
-            asciiArt: "",
-            corner: "",
-            colour: initialState.colour,
-            rectangles: []
-        }
-        
-        setArt(reset)
-        
-        if (hasSubmitted) setHasSubmitted(false)
-        if (error) setError('')
-
-    }
-
-    const handleClickInit = (event) => {        
-        event.preventDefault();       
-        setArt(initialState)
-        if (hasSubmitted) setHasSubmitted(false)   
-        if (error) setError('')
+    const handleClickInit = () => {
+        setDraft(initialArtwork)
+        clearResult()
     }
 
     return (
@@ -105,7 +71,7 @@ export const Artwork = () => {
                             className="art-input"
                             id="asciiArt"
                             name="asciiArt"
-                            value={art.asciiArt}
+                            value={draft.asciiArt}
                             required
                             autoFocus
                             onChange={handleChangeInput}
@@ -118,7 +84,7 @@ export const Artwork = () => {
                     </div>
                     <div id="info">
                         <div id="input-corner">
-                            <label id="corner-label"  htmlFor="corner">{UIText.inputCorner}:</label>
+                            <label id="corner-label" htmlFor="corner">{UIText.inputCorner}:</label>
                             <input
                                 className="corner-input"
                                 type="text"
@@ -127,32 +93,34 @@ export const Artwork = () => {
                                 required
                                 maxLength="1"
                                 onChange={handleChangeInput}
-                                value={art.corner}
+                                value={draft.corner}
                             />
                         </div>
                         <div id="input-colour">
                             <label id="colour-label" htmlFor="colour">{UIText.inputColour}:</label>
-                            <CompactPicker
+                            <input
+                                className="colour-input"
+                                type="color"
                                 id="colour"
                                 name="colour"
-                                color={art.colour}
-                                onChange={handleChangeColour} 
+                                value={draft.colour}
+                                onChange={handleChangeInput}
                             />
                         </div>
                         <div id="form-buttons">
                             <button type="submit">{UIText.buttonSubmit}</button>
-                            <button onClick={handleClickClear}>{UIText.buttonClear}</button> 
-                            <button onClick={handleClickInit}>{UIText.buttonInit}</button> 
+                            <button type="button" onClick={handleClickClear}>
+                                {UIText.buttonClear}
+                            </button>
+                            <button type="button" onClick={handleClickInit}>
+                                {UIText.buttonInit}
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div id="seperator">&nbsp;</div>
             </form>
-            { hasSubmitted && (
-                <StoreContext.Provider value={store}>   
-                    <Solution />
-                </StoreContext.Provider>
-            )}
+            {result && <Solution result={result} />}
         </>
     )
-};
+}

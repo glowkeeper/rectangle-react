@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "react": "^19.3.0",
-    "react-color": "^2.19.3",
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.4"
   },

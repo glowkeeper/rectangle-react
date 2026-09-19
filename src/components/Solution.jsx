@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { StoreContext } from '../store'
 import { UIText } from '../config'
 
 const isOnPerimeter = (row, column, rectangle) => {
+    if (!rectangle) return false
+
     const { top, left, bottom, right } = rectangle
     const isHorizontalEdge = (row === top || row === bottom)
         && column >= left
@@ -36,46 +37,54 @@ export const RectangleSolution = ({ asciiArt, rectangle, colour }) => {
     )
 }
 
-export const Solution = () => {
-    const { state } = useContext(StoreContext)
+export const Solution = ({ result }) => {
+    const [selectedIndex, setSelectedIndex] = useState(0)
 
-    if (!state.hasSolution) {
-        return (
-            <div id="spinner">
-                <div className="spinner-2">&nbsp;</div>
-            </div>
-        )
+    useEffect(() => {
+        setSelectedIndex(0)
+    }, [result.rectangles])
+
+    const rectangleCount = result.rectangles.length
+    const selectedRectangle = result.rectangles[selectedIndex] ?? null
+
+    const selectPrevious = () => {
+        setSelectedIndex((current) => {
+            return (current - 1 + rectangleCount) % rectangleCount
+        })
     }
 
-    const lines = state.asciiArt.split(/\n/)
-    const columnWidth = lines.reduce((maximum, line) => {
-        return Math.max(maximum, line.length)
-    }, 0)
+    const selectNext = () => {
+        setSelectedIndex((current) => {
+            return (current + 1) % rectangleCount
+        })
+    }
 
     return (
         <>
             <p id="solutions">
-                {UIText.outputSolutions}: {state.rectangles.length}
+                {UIText.outputSolutions}: {rectangleCount}
             </p>
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(auto-fit, minmax(${columnWidth}ch, 1fr))`,
-                    gap: '8px',
-                }}
-            >
-                {state.rectangles.map((rectangle) => (
-                    <div
-                        key={`${rectangle.top}-${rectangle.left}-${rectangle.bottom}-${rectangle.right}`}
-                        className="ascii-solution"
-                    >
-                        <RectangleSolution
-                            asciiArt={state.asciiArt}
-                            rectangle={rectangle}
-                            colour={state.colour}
-                        />
+            <div className="solution-viewer">
+                {rectangleCount > 1 && (
+                    <div className="solution-controls">
+                        <button type="button" onClick={selectPrevious}>
+                            previous
+                        </button>
+                        <output aria-live="polite">
+                            rectangle {selectedIndex + 1} of {rectangleCount}
+                        </output>
+                        <button type="button" onClick={selectNext}>
+                            next
+                        </button>
                     </div>
-                ))}
+                )}
+                <div className="ascii-solution">
+                    <RectangleSolution
+                        asciiArt={result.asciiArt}
+                        rectangle={selectedRectangle}
+                        colour={result.colour}
+                    />
+                </div>
             </div>
         </>
     )

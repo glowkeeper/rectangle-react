@@ -14,7 +14,7 @@ export const App = () => {
         return () => {
           document.title = prevTitle;
         };
-      });
+      }, []);
 
     return (    
         <>
