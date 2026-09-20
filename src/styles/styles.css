@@ -184,6 +184,7 @@ input.colour-input {
 }
 
 .rectangle-highlight--focused {
+  z-index: 2;
   border: 4px double #9b1c1c;
   background: repeating-linear-gradient(
     135deg,
@@ -196,7 +197,7 @@ input.colour-input {
 
 .board-character,
 .board-corner {
-  z-index: 2;
+  z-index: 3;
   display: grid;
   box-sizing: border-box;
   width: 2.75rem;

@@ -55,7 +55,7 @@ export const rectangleKey = (firstCorner, secondCorner) => {
   return `${rectangle.top},${rectangle.left}:${rectangle.bottom},${rectangle.right}`
 }
 
-const rectangleCoordinatesKey = (rectangle) => rectangleKey(
+export const rectangleCoordinatesKey = (rectangle) => rectangleKey(
   { row: rectangle.top, column: rectangle.left },
   { row: rectangle.bottom, column: rectangle.right }
 )

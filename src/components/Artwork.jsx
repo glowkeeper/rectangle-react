@@ -7,19 +7,11 @@ import {
     focusNextRectangle,
     focusPreviousRectangle,
     getPlayState,
+    rectangleCoordinatesKey,
     restartSession,
     selectCorner,
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
-
-const sameRectangle = (first, second) => {
-    return first !== null
-        && second !== null
-        && first.top === second.top
-        && first.left === second.left
-        && first.bottom === second.bottom
-        && first.right === second.right
-}
 
 const foundLabel = (count) => `Found ${count} ${count === 1 ? 'rectangle' : 'rectangles'}.`
 
@@ -51,8 +43,11 @@ export const Artwork = () => {
         return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
     })
     const playState = getPlayState(session)
+    const focusedKey = playState.focusedRectangle === null
+        ? null
+        : rectangleCoordinatesKey(playState.focusedRectangle)
     const focusedIndex = playState.foundRectangles.findIndex((rectangle) => {
-        return sameRectangle(rectangle, playState.focusedRectangle)
+        return rectangleCoordinatesKey(rectangle) === focusedKey
     })
 
     const handleSelectCorner = (corner) => {

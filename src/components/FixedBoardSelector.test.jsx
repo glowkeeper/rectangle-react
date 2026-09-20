@@ -130,6 +130,8 @@ describe('FixedBoardSelector', () => {
       .toHaveLength(1)
     expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
       .toHaveLength(1)
+    expect(container.querySelectorAll('[data-rectangle-state]')[1])
+      .toHaveAttribute('data-rectangle-state', 'focused')
   })
 
   test('renders board characters as text rather than markup', () => {

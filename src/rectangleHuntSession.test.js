@@ -4,6 +4,7 @@ import {
   focusNextRectangle,
   focusPreviousRectangle,
   getPlayState,
+  rectangleCoordinatesKey,
   rectangleKey,
   restartSession,
   selectCorner,
@@ -28,6 +29,15 @@ describe('rectangleKey', () => {
   test('rejects malformed coordinates', () => {
     expect(() => rectangleKey({ row: 0, column: 0 }, { row: 1.5, column: 2 }))
       .toThrow('A corner must have integer row and column coordinates.')
+  })
+
+  test('uses the same identity for solver rectangles and selected corners', () => {
+    const rectangle = { top: 1, left: 2, bottom: 4, right: 7 }
+
+    expect(rectangleCoordinatesKey(rectangle)).toBe(rectangleKey(
+      { row: 1, column: 2 },
+      { row: 4, column: 7 }
+    ))
   })
 })
 

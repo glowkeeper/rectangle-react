@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
+import { rectangleCoordinatesKey } from '../rectangleHuntSession'
 
 const cornerKey = ({ row, column }) => `${row}:${column}`
 
@@ -22,10 +23,6 @@ const cornerName = (corner, state) => {
   return location
 }
 
-const rectangleKey = (rectangle) => {
-  return `${rectangle.top}:${rectangle.left}:${rectangle.bottom}:${rectangle.right}`
-}
-
 export const FixedBoardSelector = ({
   board = FIXED_BOARD,
   cornerCharacter = FIXED_BOARD_CORNER,
@@ -40,6 +37,15 @@ export const FixedBoardSelector = ({
   const [candidateKey, setCandidateKey] = useState(null)
   const { columns, lines } = getLines(board)
   const selectedKey = selectedCorner === null ? null : cornerKey(selectedCorner)
+  const focusedKey = focusedRectangle === null
+    ? null
+    : rectangleCoordinatesKey(focusedRectangle)
+  const orderedRectangles = [...foundRectangles].sort((first, second) => {
+    const firstFocused = rectangleCoordinatesKey(first) === focusedKey
+    const secondFocused = rectangleCoordinatesKey(second) === focusedKey
+
+    return Number(firstFocused) - Number(secondFocused)
+  })
 
   const getCornerState = (corner) => {
     const key = cornerKey(corner)
@@ -89,9 +95,9 @@ export const FixedBoardSelector = ({
           className="rectangle-board-grid"
           style={{ '--board-columns': columns }}
         >
-          {foundRectangles.map((rectangle) => {
-            const focused = focusedRectangle !== null
-              && rectangleKey(rectangle) === rectangleKey(focusedRectangle)
+          {orderedRectangles.map((rectangle) => {
+            const key = rectangleCoordinatesKey(rectangle)
+            const focused = key === focusedKey
 
             return (
               <span
@@ -100,7 +106,7 @@ export const FixedBoardSelector = ({
                   : 'rectangle-highlight rectangle-highlight--found'}
                 aria-hidden="true"
                 data-rectangle-state={focused ? 'focused' : 'found'}
-                key={rectangleKey(rectangle)}
+                key={key}
                 style={{
                   gridColumn: `${rectangle.left + 1} / ${rectangle.right + 2}`,
                   gridRow: `${rectangle.top + 1} / ${rectangle.bottom + 2}`,
