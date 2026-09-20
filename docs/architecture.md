@@ -3,8 +3,8 @@
 ## Purpose
 
 Rectangles is a React and Vite application built around a pure rectangle
-engine. The target game presents a fixed board and lets the player find every
-rectangle by selecting opposite corners.
+engine. The game presents one of a curated set of fixed boards and lets the
+player find rectangles by selecting opposite corners.
 
 ## Runtime boundary
 
@@ -30,7 +30,7 @@ player-session state do not belong in it.
 
 The Rectangle Hunt session needs:
 
-- the fixed board;
+- the selected puzzle's fixed board;
 - the complete rectangle set produced by the engine;
 - the set of rectangles found by the player;
 - an optional first selected corner;
@@ -45,7 +45,7 @@ player's explicit submission freezes the result and exposes the final total.
 The intended separation is:
 
 ```text
-fixed board
+curated puzzle data
     ↓
 pure rectangle engine
     ↓
@@ -62,6 +62,17 @@ and corner against the current puzzle, and corrupt, stale, or incompatible
 records are cleared. Submitting or restarting also clears the record, so a
 submitted result is never reopened as an active attempt. Storage is local-only
 and optional: denied or unavailable browser storage does not prevent play.
+Submitted puzzle identities are stored separately from active attempts so the
+library can show a non-spoiling status without retaining or reopening a result.
+
+## Puzzle library
+
+`src/puzzles.js` is the curated content boundary. Every puzzle has a stable,
+versioned identity, title, difficulty band, board, corner character, and a
+documented design intent. Difficulty is editorial metadata and must not be
+derived from or reveal the solution total. The rectangle engine remains
+authoritative: regression tests validate every board and its expected solver
+output independently of the React library presentation.
 
 ## Selection
 
@@ -80,7 +91,7 @@ Board text is rendered through React text nodes. Do not construct HTML from
 board content or introduce `dangerouslySetInnerHTML`. Coordinates control
 presentation without rewriting the board.
 
-The fixed drawing must remain legible as rectangles overlap. Candidate, newest,
+The selected drawing must remain legible as rectangles overlap. Candidate, newest,
 previously found, and focused states need structural or textual distinctions in
 addition to colour. Interactive corners and controls need visible focus and
 meaningful accessible names.

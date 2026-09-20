@@ -7,10 +7,14 @@ import {
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from './fixedBoard'
 import {
   clearSavedHunt,
+  clearPuzzleProgress,
+  getPuzzleStatus,
   HUNT_PROGRESS_KEY,
   loadActiveHunt,
+  markPuzzleSubmitted,
   saveActiveHunt,
 } from './rectangleHuntPersistence'
+import { PUZZLES } from './puzzles'
 
 const memoryStorage = () => {
   const values = new Map()
@@ -117,5 +121,40 @@ describe('unfinished hunt persistence', () => {
 
     expect(getPlayState(session)).toMatchObject({ status: 'playing', foundCount: 0 })
     expect(() => saveActiveHunt(storage, session)).not.toThrow()
+    expect(getPuzzleStatus(null, PUZZLES[0])).toBe('not-started')
+  })
+
+  test('keeps active progress separate for each puzzle', () => {
+    const storage = memoryStorage()
+    const [easyPuzzle, mediumPuzzle] = PUZZLES
+    let easySession = loadActiveHunt(
+      storage,
+      easyPuzzle.board,
+      easyPuzzle.cornerCharacter,
+      easyPuzzle.id
+    )
+    easySession = choose(easySession, { row: 0, column: 0 }, { row: 2, column: 3 })
+    saveActiveHunt(storage, easySession, easyPuzzle.id)
+
+    expect(getPuzzleStatus(storage, easyPuzzle)).toBe('in-progress')
+    expect(getPuzzleStatus(storage, mediumPuzzle)).toBe('not-started')
+  })
+
+  test('tracks submitted status without reopening a submitted attempt', () => {
+    const storage = memoryStorage()
+    const puzzle = PUZZLES[0]
+
+    markPuzzleSubmitted(storage, puzzle.id)
+
+    expect(getPuzzleStatus(storage, puzzle)).toBe('submitted')
+    expect(getPlayState(loadActiveHunt(
+      storage,
+      puzzle.board,
+      puzzle.cornerCharacter,
+      puzzle.id
+    ))).toMatchObject({ status: 'playing', foundCount: 0 })
+
+    clearPuzzleProgress(storage, puzzle.id)
+    expect(getPuzzleStatus(storage, puzzle)).toBe('not-started')
   })
 })

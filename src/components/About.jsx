@@ -10,12 +10,13 @@ export const About = () => {
             </p>
             <p>
                 Each new discovery is highlighted and added to the review controls.
-                The total stays secret until you have found them all, so the drawing
-                remains a puzzle rather than a checklist.
+                You decide when to finish, and the total stays secret until you
+                submit, so the drawing remains a puzzle rather than a checklist.
             </p>
             <p>
-                The game runs entirely in your browser and does not require an
-                account. It grew from the rectangle-finding problem on{' '}
+                The library ranges from gentle separated shapes to dense shared
+                edges. Puzzle progress stays in this browser, and the game does not
+                require an account. It grew from the rectangle-finding problem on{' '}
                 <a href="https://exercism.org/tracks/javascript/exercises/rectangles/">
                     Exercism
                 </a>

@@ -322,6 +322,108 @@ input.colour-input {
   margin-inline: auto;
 }
 
+.puzzle-library {
+  width: min(100%, 64rem);
+  margin: 2.5rem auto 0;
+}
+
+.puzzle-library-intro {
+  max-width: 42rem;
+  margin-bottom: 1.5rem;
+}
+
+.puzzle-library-intro h2,
+.puzzle-heading h2 {
+  margin: 0.2rem 0 0;
+  font-size: 1.5rem;
+}
+
+.puzzle-library-intro p:last-child {
+  line-height: 1.55;
+}
+
+.eyebrow,
+.difficulty-label {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.puzzle-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.puzzle-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.puzzle-card-meta,
+.puzzle-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.puzzle-card h3 {
+  margin: 0.65rem 0;
+}
+
+.puzzle-card pre {
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  padding: 0.75rem;
+  border-radius: 0.35rem;
+  background: var(--page);
+  font-size: clamp(0.8rem, 1.7vw, 1rem);
+  line-height: 1.35;
+}
+
+.puzzle-card button,
+.puzzle-heading button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.puzzle-card button {
+  width: 100%;
+  margin-top: auto;
+}
+
+.puzzle-status {
+  padding: 0.2rem 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.puzzle-status--in-progress {
+  border-style: dashed;
+  color: var(--focus);
+}
+
+.puzzle-status--submitted {
+  border-style: double;
+  color: var(--found);
+}
+
+.puzzle-heading {
+  margin: 2rem 0 1rem;
+}
+
 .about-page {
   width: min(100%, 42rem);
   margin: 2.5rem auto 0;
@@ -545,5 +647,21 @@ input.colour-input {
   .hunt-actions,
   .finish-dialog-actions {
     flex-wrap: wrap;
+  }
+
+  .puzzle-library {
+    margin-top: 1.5rem;
+  }
+
+  .puzzle-list {
+    grid-template-columns: 1fr;
+  }
+
+  .puzzle-card pre {
+    font-size: 1rem;
+  }
+
+  .puzzle-heading {
+    align-items: flex-start;
   }
 }

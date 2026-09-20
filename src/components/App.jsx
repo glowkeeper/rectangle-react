@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, Route, Routes } from "react-router-dom"
 
-import { Artwork } from './Artwork'
+import { PuzzleLibrary } from './PuzzleLibrary'
 import { About } from './About'
 
 import { UIText, LocalRoutes } from '../config'
@@ -36,7 +36,7 @@ export const App = () => {
                 <Routes>
                     <Route
                         path={LocalRoutes.home}
-                        element={<Artwork />}
+                        element={<PuzzleLibrary />}
                     />
                     <Route
                         path={LocalRoutes.about}
@@ -50,8 +50,9 @@ export const App = () => {
                     <a href="https://huckle.studio/">Steve Huckle</a>
                 </p>
                 <p className="privacy-note">
-                    Privacy: unfinished hunts are stored in this browser. No cookies,
-                    accounts, analytics, or remote storage are used.
+                    Privacy: puzzle progress and submission status are stored in
+                    this browser. No cookies, accounts, analytics, or remote storage
+                    are used.
                 </p>
             </footer>
         </>
