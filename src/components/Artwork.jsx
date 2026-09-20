@@ -36,6 +36,10 @@ const feedbackMessage = (playState) => {
     }
 }
 
+const progressLabel = (count) => {
+    return `${count} ${count === 1 ? 'rectangle' : 'rectangles'} found`
+}
+
 export const Artwork = () => {
     const [session, setSession] = useState(() => {
         return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
@@ -66,14 +70,24 @@ export const Artwork = () => {
                 onCancelSelection={handleCancelSelection}
             />
 
-            <p
-                className={`hunt-feedback${playState.status === 'complete' ? ' hunt-feedback--complete' : ''}`}
-                role="status"
-                aria-label="Game status"
-                aria-live="polite"
-            >
-                {feedbackMessage(playState)}
-            </p>
+            <div className={`hunt-status${playState.status === 'complete' ? ' hunt-status--complete' : ''}`}>
+                <p
+                    className="hunt-feedback"
+                    role="status"
+                    aria-label="Game status"
+                    aria-live="polite"
+                >
+                    {feedbackMessage(playState)}
+                </p>
+                {playState.status !== 'complete' && (
+                    <output
+                        className="hunt-progress"
+                        aria-label={progressLabel(playState.foundCount)}
+                    >
+                        {playState.foundCount} found
+                    </output>
+                )}
+            </div>
 
             {playState.foundCount > 0 && (
                 <section className="discovery-review" aria-labelledby="discovery-title">
