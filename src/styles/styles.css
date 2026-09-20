@@ -171,8 +171,33 @@ input.colour-input {
   line-height: 1;
 }
 
+.rectangle-highlight {
+  z-index: 1;
+  box-sizing: border-box;
+  margin: 0.3rem;
+  pointer-events: none;
+}
+
+.rectangle-highlight--found {
+  border: 2px dotted #735c00;
+  opacity: 0.55;
+}
+
+.rectangle-highlight--focused {
+  z-index: 2;
+  border: 4px double #9b1c1c;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 0.65rem,
+    rgba(155, 28, 28, 0.08) 0.65rem,
+    rgba(155, 28, 28, 0.08) 0.9rem
+  );
+}
+
 .board-character,
 .board-corner {
+  z-index: 3;
   display: grid;
   box-sizing: border-box;
   width: 2.75rem;
@@ -212,6 +237,69 @@ input.colour-input {
 .board-corner--candidate {
   border-color: currentColor;
   border-style: dashed;
+  background: #fff;
+}
+
+.rectangle-hunt {
+  max-width: 48rem;
+}
+
+.hunt-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.hunt-heading h2,
+.hunt-progress {
+  margin-bottom: 0.35rem;
+}
+
+.restart-button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.hunt-feedback {
+  min-height: 1.5em;
+  padding: 0.75rem;
+  border-left: 4px solid currentColor;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.discovery-review,
+.completion-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(124, 120, 120);
+  border-radius: 0.35rem;
+}
+
+.discovery-review h3,
+.completion-panel h3,
+.completion-panel p {
+  margin-top: 0;
+}
+
+.review-controls {
+  display: grid;
+  grid-template-columns: auto minmax(10rem, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.review-controls output {
+  text-align: center;
+}
+
+.review-controls button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.completion-panel {
+  border-width: 3px;
   background: #fff;
 }
 
@@ -267,5 +355,14 @@ input.colour-input {
   .board-corner {
     width: 2.5rem;
     height: 2.5rem;
+  }
+
+  .review-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .review-controls output {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 }

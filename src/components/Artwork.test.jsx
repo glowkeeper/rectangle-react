@@ -1,49 +1,99 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { Artwork } from './Artwork'
-import { BOARD_LIMITS } from '../getSolution'
 
-describe('Artwork board limits', () => {
-    test('connects fixed-board corner selection to the session model', () => {
+const selectCorner = (row, column) => {
+    fireEvent.click(screen.getByRole('button', {
+        name: new RegExp(`Corner at row ${row}, column ${column}`),
+    }))
+}
+
+const selectRectangle = (first, second) => {
+    selectCorner(...first)
+    selectCorner(...second)
+}
+
+describe('Rectangle Hunt game loop', () => {
+    test('starts on the fixed drawing with a hidden total', () => {
         render(<Artwork />)
 
-        const corner = screen.getByRole('button', {
-            name: 'Corner at row 1, column 4',
-        })
-        fireEvent.click(corner)
-
-        expect(screen.getByRole('button', { name: /row 1, column 4/ }))
-            .toHaveAttribute('data-corner-state', 'selected')
+        expect(screen.getByRole('group', { name: 'Rectangle Hunt drawing' }))
+            .toBeInTheDocument()
+        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.queryByText(/drawing contains/i)).not.toBeInTheDocument()
+        expect(screen.queryByLabelText('art:')).not.toBeInTheDocument()
     })
 
-    test('does not move initial focus past the fixed-board controls', () => {
-        render(<Artwork />)
+    test('records and focuses a valid new rectangle', () => {
+        const { container } = render(<Artwork />)
 
-        expect(screen.getByLabelText('art:')).not.toHaveAttribute('autofocus')
-        expect(screen.getByLabelText('art:')).not.toHaveFocus()
+        selectRectangle([1, 4], [3, 7])
+
+        expect(screen.getByText('Found 1 rectangle.')).toBeInTheDocument()
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('Found a new rectangle.')
+        expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
+            .toHaveLength(1)
+        expect(screen.getByText('Discovery 1 of 1')).toBeInTheDocument()
     })
 
-    test('uses the native colour input', () => {
+    test('reports an invalid pair without changing progress', () => {
         render(<Artwork />)
 
-        const colourInput = screen.getByLabelText('colour:')
+        selectRectangle([1, 4], [1, 7])
 
-        expect(colourInput).toHaveAttribute('type', 'color')
-        expect(colourInput).toHaveValue('#ff0000')
+        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('That pair does not form a rectangle. Try again.')
     })
 
-    test('shows an accessible error instead of attempting an oversized board', () => {
+    test('does not recount a duplicate and focuses the discovery', () => {
+        const { container } = render(<Artwork />)
+
+        selectRectangle([1, 4], [3, 7])
+        selectRectangle([3, 7], [1, 4])
+
+        expect(screen.getByText('Found 1 rectangle.')).toBeInTheDocument()
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('Already found. Showing that rectangle.')
+        expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
+            .toHaveLength(1)
+    })
+
+    test('reviews found rectangles backward and forward', () => {
         render(<Artwork />)
 
-        const textarea = screen.getByLabelText('art:')
-        fireEvent.change(textarea, {
-            target: { value: ' '.repeat(BOARD_LIMITS.maxColumns + 1) },
-        })
-        fireEvent.click(screen.getByRole('button', { name: 'submit' }))
+        selectRectangle([1, 4], [3, 7])
+        selectRectangle([2, 3], [3, 4])
 
-        expect(screen.getByRole('alert')).toHaveTextContent(
-            `Artwork cannot exceed ${BOARD_LIMITS.maxColumns} columns.`
-        )
-        expect(textarea).toHaveAttribute('aria-invalid', 'true')
+        expect(screen.getByText('Discovery 2 of 2')).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', { name: 'Previous' }))
+        expect(screen.getByText('Discovery 1 of 2')).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+        expect(screen.getByText('Discovery 2 of 2')).toBeInTheDocument()
+    })
+
+    test('reveals the total only after the final rectangle and can restart', () => {
+        render(<Artwork />)
+        const rectangles = [
+            [[1, 4], [3, 7]],
+            [[1, 4], [5, 7]],
+            [[2, 3], [3, 4]],
+            [[3, 1], [5, 4]],
+            [[3, 1], [5, 7]],
+            [[3, 4], [5, 7]],
+        ]
+
+        rectangles.forEach(([first, second]) => selectRectangle(first, second))
+
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('Puzzle complete! You found all 6 rectangles.')
+        expect(screen.getByText('The drawing contains 6 rectangles.'))
+            .toBeInTheDocument()
+
+        fireEvent.click(screen.getByRole('button', { name: 'Restart' }))
+
+        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.queryByText(/drawing contains/i)).not.toBeInTheDocument()
     })
 })

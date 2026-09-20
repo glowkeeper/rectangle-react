@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
+import { rectangleCoordinatesKey } from '../rectangleHuntSession'
 
 const cornerKey = ({ row, column }) => `${row}:${column}`
 
@@ -26,6 +27,8 @@ export const FixedBoardSelector = ({
   board = FIXED_BOARD,
   cornerCharacter = FIXED_BOARD_CORNER,
   selectedCorner = null,
+  foundRectangles = [],
+  focusedRectangle = null,
   onSelectCorner,
   onCancelSelection,
 }) => {
@@ -34,6 +37,15 @@ export const FixedBoardSelector = ({
   const [candidateKey, setCandidateKey] = useState(null)
   const { columns, lines } = getLines(board)
   const selectedKey = selectedCorner === null ? null : cornerKey(selectedCorner)
+  const focusedKey = focusedRectangle === null
+    ? null
+    : rectangleCoordinatesKey(focusedRectangle)
+  const orderedRectangles = [...foundRectangles].sort((first, second) => {
+    const firstFocused = rectangleCoordinatesKey(first) === focusedKey
+    const secondFocused = rectangleCoordinatesKey(second) === focusedKey
+
+    return Number(firstFocused) - Number(secondFocused)
+  })
 
   const getCornerState = (corner) => {
     const key = cornerKey(corner)
@@ -83,6 +95,25 @@ export const FixedBoardSelector = ({
           className="rectangle-board-grid"
           style={{ '--board-columns': columns }}
         >
+          {orderedRectangles.map((rectangle) => {
+            const key = rectangleCoordinatesKey(rectangle)
+            const focused = key === focusedKey
+
+            return (
+              <span
+                className={focused
+                  ? 'rectangle-highlight rectangle-highlight--focused'
+                  : 'rectangle-highlight rectangle-highlight--found'}
+                aria-hidden="true"
+                data-rectangle-state={focused ? 'focused' : 'found'}
+                key={key}
+                style={{
+                  gridColumn: `${rectangle.left + 1} / ${rectangle.right + 2}`,
+                  gridRow: `${rectangle.top + 1} / ${rectangle.bottom + 2}`,
+                }}
+              />
+            )
+          })}
           {lines.flatMap((line, row) => {
             return [...line].map((character, column) => {
               const corner = { row, column }
@@ -95,6 +126,7 @@ export const FixedBoardSelector = ({
                     aria-hidden="true"
                     data-board-cell
                     key={key}
+                    style={{ gridColumn: column + 1, gridRow: row + 1 }}
                   >
                     {character === ' ' ? '\u00a0' : character}
                   </span>
@@ -111,6 +143,7 @@ export const FixedBoardSelector = ({
                   data-board-cell
                   data-corner-state={state}
                   key={key}
+                  style={{ gridColumn: column + 1, gridRow: row + 1 }}
                   onClick={() => selectCorner(corner)}
                   onFocus={() => updateCandidate(corner)}
                   onBlur={() => clearCandidate(corner)}

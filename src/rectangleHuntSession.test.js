@@ -1,7 +1,10 @@
 import {
   cancelSelection,
   createRectangleHuntSession,
+  focusNextRectangle,
+  focusPreviousRectangle,
   getPlayState,
+  rectangleCoordinatesKey,
   rectangleKey,
   restartSession,
   selectCorner,
@@ -26,6 +29,15 @@ describe('rectangleKey', () => {
   test('rejects malformed coordinates', () => {
     expect(() => rectangleKey({ row: 0, column: 0 }, { row: 1.5, column: 2 }))
       .toThrow('A corner must have integer row and column coordinates.')
+  })
+
+  test('uses the same identity for solver rectangles and selected corners', () => {
+    const rectangle = { top: 1, left: 2, bottom: 4, right: 7 }
+
+    expect(rectangleCoordinatesKey(rectangle)).toBe(rectangleKey(
+      { row: 1, column: 2 },
+      { row: 4, column: 7 }
+    ))
   })
 })
 
@@ -228,6 +240,34 @@ describe('Rectangle Hunt lifecycle', () => {
       foundRectangles: [],
       selectionResult: null,
     })
+  })
+
+  test('moves backward and forward through found rectangles', () => {
+    const firstFind = choose(
+      createRectangleHuntSession(TWO_RECTANGLES),
+      { row: 0, column: 0 },
+      { row: 2, column: 2 }
+    )
+    const secondFind = choose(
+      firstFind,
+      { row: 0, column: 4 },
+      { row: 2, column: 6 }
+    )
+    const previous = focusPreviousRectangle(secondFind)
+    const next = focusNextRectangle(previous)
+
+    expect(getPlayState(previous)).toMatchObject({
+      focusedRectangle: { top: 0, left: 0, bottom: 2, right: 2 },
+      selectionResult: { type: 'review' },
+    })
+    expect(getPlayState(next)).toMatchObject({
+      focusedRectangle: { top: 0, left: 4, bottom: 2, right: 6 },
+      selectionResult: { type: 'review' },
+    })
+    expect(getPlayState(focusPreviousRectangle(previous)).focusedRectangle)
+      .toEqual({ top: 0, left: 4, bottom: 2, right: 6 })
+    expect(getPlayState(focusNextRectangle(next)).focusedRectangle)
+      .toEqual({ top: 0, left: 0, bottom: 2, right: 2 })
   })
 
   test('a board without rectangles is already complete', () => {
