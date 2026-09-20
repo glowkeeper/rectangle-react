@@ -24,6 +24,16 @@ describe('FixedBoardSelector', () => {
     expect(container.querySelectorAll('[data-board-cell]')).toHaveLength(5 * 7)
   })
 
+  test('can disable corner selection after a hunt is submitted', () => {
+    render(<FixedBoardSelector {...defaultProps} disabled />)
+
+    expect(screen.getByText('Hunt submitted. Corner selection is closed.'))
+      .toBeInTheDocument()
+    screen.getAllByRole('button', { name: /Corner at row/ }).forEach((corner) => {
+      expect(corner).toBeDisabled()
+    })
+  })
+
   test('pointer activation reports the selected coordinate', () => {
     const onSelectCorner = vi.fn()
     render(

@@ -31,6 +31,7 @@ export const FixedBoardSelector = ({
   focusedRectangle = null,
   onSelectCorner,
   onCancelSelection,
+  disabled = false,
 }) => {
   const headingId = useId()
   const instructionsId = useId()
@@ -82,7 +83,9 @@ export const FixedBoardSelector = ({
     <section className="fixed-board-selector" aria-labelledby={headingId}>
       <h3 id={headingId}>Find the rectangles</h3>
       <p id={instructionsId}>
-        Choose two opposite corners. Use Tab to move between corners and Escape to cancel the first corner.
+        {disabled
+          ? 'Hunt submitted. Corner selection is closed.'
+          : 'Choose two opposite corners. Use Tab to move between corners and Escape to cancel the first corner.'}
       </p>
       <div
         className="rectangle-board"
@@ -142,6 +145,7 @@ export const FixedBoardSelector = ({
                   aria-label={cornerName(corner, state)}
                   data-board-cell
                   data-corner-state={state}
+                  disabled={disabled}
                   key={key}
                   style={{ gridColumn: column + 1, gridRow: row + 1 }}
                   onClick={() => selectCorner(corner)}
