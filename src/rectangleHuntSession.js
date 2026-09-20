@@ -81,6 +81,7 @@ const initialSession = (board, cornerCharacter) => {
     lines,
     rectanglesByKey,
     foundKeys: new Set(),
+    submittedFoundKeys: null,
     selectedCorner: null,
     focusedKey: null,
     selectionResult: null,
@@ -93,6 +94,8 @@ export const createRectangleHuntSession = (board, cornerCharacter = '+') => {
 
 export const selectCorner = (session, corner) => {
   assertCorner(corner)
+
+  if (session.submittedFoundKeys !== null) return session
 
   if (!isEligibleCorner(session, corner)) {
     return {
@@ -158,6 +161,17 @@ export const restartSession = (session) => {
   return initialSession(session.board, session.cornerCharacter)
 }
 
+export const submitSession = (session) => {
+  if (session.submittedFoundKeys !== null) return session
+
+  return {
+    ...session,
+    submittedFoundKeys: new Set(session.foundKeys),
+    selectedCorner: null,
+    selectionResult: null,
+  }
+}
+
 const focusRectangleByOffset = (session, offset) => {
   const foundKeys = [...session.foundKeys]
   const currentIndex = foundKeys.indexOf(session.focusedKey)
@@ -186,23 +200,29 @@ export const focusNextRectangle = (session) => {
 }
 
 export const getPlayState = (session) => {
-  const complete = session.foundKeys.size === session.rectanglesByKey.size
-  const foundRectangles = [...session.foundKeys].map((key) => {
+  const submitted = session.submittedFoundKeys !== null
+  const resultKeys = submitted ? session.submittedFoundKeys : session.foundKeys
+  const foundRectangles = [...resultKeys].map((key) => {
     return cloneRectangle(session.rectanglesByKey.get(key))
   })
   const focusedRectangle = session.focusedKey === null
     ? null
     : cloneRectangle(session.rectanglesByKey.get(session.focusedKey))
   const playState = {
-    status: complete ? 'complete' : 'playing',
-    foundCount: session.foundKeys.size,
+    status: submitted ? 'submitted' : 'playing',
+    foundCount: resultKeys.size,
     selectedCorner: cloneCorner(session.selectedCorner),
     focusedRectangle,
     foundRectangles,
     selectionResult: cloneSelectionResult(session.selectionResult),
   }
 
-  if (complete) playState.total = session.rectanglesByKey.size
+  if (submitted) {
+    playState.total = session.rectanglesByKey.size
+    playState.missedRectangles = [...session.rectanglesByKey]
+      .filter(([key]) => !session.submittedFoundKeys.has(key))
+      .map(([, rectangle]) => cloneRectangle(rectangle))
+  }
 
   return playState
 }

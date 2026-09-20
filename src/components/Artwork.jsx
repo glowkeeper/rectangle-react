@@ -14,10 +14,6 @@ import {
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 
 const feedbackMessage = (playState) => {
-    if (playState.status === 'complete') {
-        return `Puzzle complete! You found all ${playState.total} rectangles.`
-    }
-
     switch (playState.selectionResult?.type) {
         case 'selection-started':
             return 'First corner selected. Choose the opposite corner.'
@@ -70,7 +66,7 @@ export const Artwork = () => {
                 onCancelSelection={handleCancelSelection}
             />
 
-            <div className={`hunt-status${playState.status === 'complete' ? ' hunt-status--complete' : ''}`}>
+            <div className="hunt-status">
                 <p
                     className="hunt-feedback"
                     role="status"
@@ -79,14 +75,12 @@ export const Artwork = () => {
                 >
                     {feedbackMessage(playState)}
                 </p>
-                {playState.status !== 'complete' && (
-                    <output
-                        className="hunt-progress"
-                        aria-label={progressLabel(playState.foundCount)}
-                    >
-                        {playState.foundCount} found
-                    </output>
-                )}
+                <output
+                    className="hunt-progress"
+                    aria-label={progressLabel(playState.foundCount)}
+                >
+                    {playState.foundCount} found
+                </output>
             </div>
 
             {playState.foundCount > 0 && (

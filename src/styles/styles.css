@@ -342,11 +342,6 @@ input.colour-input {
   padding: 0.75rem;
 }
 
-.hunt-status--complete {
-  border-left-width: 0.5rem;
-  font-weight: 700;
-}
-
 .hunt-progress {
   margin-right: 0.75rem;
   padding: 0.35rem 0.55rem;

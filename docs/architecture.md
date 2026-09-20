@@ -34,12 +34,13 @@ The Rectangle Hunt session needs:
 - the complete rectangle set produced by the engine;
 - the set of rectangles found by the player;
 - an optional first selected corner;
-- an optional focused rectangle for reviewing discoveries.
+- an optional focused rectangle for reviewing discoveries;
+- an explicit submitted result that freezes the player's discoveries.
 
 A rectangle is identified by its four coordinates. Found rectangles are stored
-as a set so the same rectangle cannot be counted twice. Completion is derived
-by comparing the found set with the engine's complete set; the hidden total is
-not exposed by the interface before completion.
+as a set so the same rectangle cannot be counted twice. Solver completeness is
+kept internal and never changes the player-visible state during play. Only the
+player's explicit submission freezes the result and exposes the final total.
 
 The intended separation is:
 
@@ -79,13 +80,14 @@ meaningful accessible names.
 
 The solver limits and performance tests remain the computational boundary. The
 interface renders one board, not one complete board per rectangle. Adding a
-rectangle to the found set and checking completion should use coordinate keys
-rather than repeatedly searching coordinate objects.
+rectangle to the found set and producing a submitted result should use
+coordinate keys rather than repeatedly searching coordinate objects.
 
 ## Verification
 
 - Canonical and regression tests protect rectangle detection.
-- Session tests should cover valid, invalid, duplicate, and completing finds.
+- Session tests should cover valid, invalid, duplicate, all-found, and submitted
+  states without leaking solution completeness during play.
 - Component tests should cover safe rendering and selection feedback.
 - Browser checks should exercise corner selection and discovery review with
   pointer, touch-sized controls, and keyboard.

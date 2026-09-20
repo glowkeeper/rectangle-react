@@ -59,11 +59,11 @@ and standalone issues are genuine one-offs. Children do not have children.
   introduce a required backend or remote service without an agreed
   architectural change.
 - Build the agreed Rectangle Hunt loop: a fixed board, opposite-corner
-  selection, recorded discoveries, a hidden total, and completion when every
-  rectangle has been found.
+  selection, recorded discoveries, a hidden total, and a player-controlled
+  submission that reveals the answer without signalling completeness early.
 - Keep player-session rules separate from React components.
 - Use one coordinate identity for solver results, found rectangles, duplicate
-  detection, review, and completion.
+  detection, review, and submitted results.
 - Do not reveal unfound rectangles or the final total during play.
 - Provide equivalent pointer, touch, and keyboard selection.
 - Do not rely on colour alone to communicate rectangle state.
