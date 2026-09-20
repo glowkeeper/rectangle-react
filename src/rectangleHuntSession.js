@@ -6,6 +6,26 @@ const cloneCorner = (corner) => corner === null
 
 const cloneRectangle = (rectangle) => ({ ...rectangle })
 
+const cloneSelectionResult = (selectionResult) => {
+  if (selectionResult === null) return null
+
+  const clone = { ...selectionResult }
+
+  if (selectionResult.corner !== undefined) {
+    clone.corner = cloneCorner(selectionResult.corner)
+  }
+
+  if (selectionResult.corners !== undefined) {
+    clone.corners = selectionResult.corners.map(cloneCorner)
+  }
+
+  if (selectionResult.rectangle !== undefined) {
+    clone.rectangle = cloneRectangle(selectionResult.rectangle)
+  }
+
+  return clone
+}
+
 const assertCorner = (corner) => {
   if (
     corner === null
@@ -152,7 +172,7 @@ export const getPlayState = (session) => {
     selectedCorner: cloneCorner(session.selectedCorner),
     focusedRectangle,
     foundRectangles,
-    selectionResult: session.selectionResult,
+    selectionResult: cloneSelectionResult(session.selectionResult),
   }
 
   if (complete) playState.total = session.rectanglesByKey.size

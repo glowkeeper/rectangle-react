@@ -113,6 +113,46 @@ describe('Rectangle Hunt selection', () => {
       selectionResult: { type: 'duplicate' },
     })
   })
+
+  test('public selection results cannot mutate session state', () => {
+    const selecting = selectCorner(
+      createRectangleHuntSession(ONE_RECTANGLE),
+      { row: 0, column: 0 }
+    )
+    const publicState = getPlayState(selecting)
+
+    publicState.selectionResult.corner.row = 99
+
+    expect(getPlayState(selecting)).toMatchObject({
+      selectedCorner: { row: 0, column: 0 },
+      selectionResult: {
+        type: 'selection-started',
+        corner: { row: 0, column: 0 },
+      },
+    })
+
+    const invalid = selectCorner(selecting, { row: 0, column: 2 })
+    const invalidPublicState = getPlayState(invalid)
+
+    invalidPublicState.selectionResult.corners[0].column = 99
+
+    expect(getPlayState(invalid).selectionResult.corners[0]).toEqual({
+      row: 0,
+      column: 0,
+    })
+
+    const found = selectCorner(selecting, { row: 2, column: 2 })
+    const foundPublicState = getPlayState(found)
+
+    foundPublicState.selectionResult.rectangle.bottom = 99
+
+    expect(getPlayState(found).selectionResult.rectangle).toEqual({
+      top: 0,
+      left: 0,
+      bottom: 2,
+      right: 2,
+    })
+  })
 })
 
 describe('Rectangle Hunt lifecycle', () => {
