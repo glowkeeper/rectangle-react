@@ -22,10 +22,16 @@ const cornerName = (corner, state) => {
   return location
 }
 
+const rectangleKey = (rectangle) => {
+  return `${rectangle.top}:${rectangle.left}:${rectangle.bottom}:${rectangle.right}`
+}
+
 export const FixedBoardSelector = ({
   board = FIXED_BOARD,
   cornerCharacter = FIXED_BOARD_CORNER,
   selectedCorner = null,
+  foundRectangles = [],
+  focusedRectangle = null,
   onSelectCorner,
   onCancelSelection,
 }) => {
@@ -83,6 +89,25 @@ export const FixedBoardSelector = ({
           className="rectangle-board-grid"
           style={{ '--board-columns': columns }}
         >
+          {foundRectangles.map((rectangle) => {
+            const focused = focusedRectangle !== null
+              && rectangleKey(rectangle) === rectangleKey(focusedRectangle)
+
+            return (
+              <span
+                className={focused
+                  ? 'rectangle-highlight rectangle-highlight--focused'
+                  : 'rectangle-highlight rectangle-highlight--found'}
+                aria-hidden="true"
+                data-rectangle-state={focused ? 'focused' : 'found'}
+                key={rectangleKey(rectangle)}
+                style={{
+                  gridColumn: `${rectangle.left + 1} / ${rectangle.right + 2}`,
+                  gridRow: `${rectangle.top + 1} / ${rectangle.bottom + 2}`,
+                }}
+              />
+            )
+          })}
           {lines.flatMap((line, row) => {
             return [...line].map((character, column) => {
               const corner = { row, column }
@@ -95,6 +120,7 @@ export const FixedBoardSelector = ({
                     aria-hidden="true"
                     data-board-cell
                     key={key}
+                    style={{ gridColumn: column + 1, gridRow: row + 1 }}
                   >
                     {character === ' ' ? '\u00a0' : character}
                   </span>
@@ -111,6 +137,7 @@ export const FixedBoardSelector = ({
                   data-board-cell
                   data-corner-state={state}
                   key={key}
+                  style={{ gridColumn: column + 1, gridRow: row + 1 }}
                   onClick={() => selectCorner(corner)}
                   onFocus={() => updateCandidate(corner)}
                   onBlur={() => clearCandidate(corner)}

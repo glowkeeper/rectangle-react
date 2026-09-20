@@ -1,153 +1,132 @@
 import { useState } from 'react'
 
-import { Solution } from './Solution'
 import { FixedBoardSelector } from './FixedBoardSelector'
-import { findRectangles } from '../getSolution'
 import {
     cancelSelection,
     createRectangleHuntSession,
+    focusNextRectangle,
+    focusPreviousRectangle,
     getPlayState,
+    restartSession,
     selectCorner,
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
-import { UIText } from '../config'
 
-const initialArtwork = {
-    asciiArt: FIXED_BOARD,
-    corner: FIXED_BOARD_CORNER,
-    colour: '#ff0000',
+const sameRectangle = (first, second) => {
+    return first !== null
+        && second !== null
+        && first.top === second.top
+        && first.left === second.left
+        && first.bottom === second.bottom
+        && first.right === second.right
+}
+
+const foundLabel = (count) => `Found ${count} ${count === 1 ? 'rectangle' : 'rectangles'}.`
+
+const feedbackMessage = (playState) => {
+    if (playState.status === 'complete') {
+        return `Puzzle complete! You found all ${playState.total} rectangles.`
+    }
+
+    switch (playState.selectionResult?.type) {
+        case 'selection-started':
+            return 'First corner selected. Choose the opposite corner.'
+        case 'found':
+            return 'Found a new rectangle.'
+        case 'invalid':
+            return 'That pair does not form a rectangle. Try again.'
+        case 'duplicate':
+            return 'Already found. Showing that rectangle.'
+        case 'cancelled':
+            return 'Selection cancelled.'
+        case 'review':
+            return 'Showing a found rectangle.'
+        default:
+            return 'Choose a corner to begin.'
+    }
 }
 
 export const Artwork = () => {
-    const [huntSession, setHuntSession] = useState(() => {
+    const [session, setSession] = useState(() => {
         return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
     })
-    const [draft, setDraft] = useState(initialArtwork)
-    const [result, setResult] = useState(null)
-    const [error, setError] = useState('')
-
-    const clearResult = () => {
-        setResult(null)
-        setError('')
-    }
-
-    const handleSubmit = (event) => {
-        event.preventDefault()
-
-        try {
-            const rectangles = findRectangles(draft.asciiArt, draft.corner)
-
-            setResult({
-                asciiArt: draft.asciiArt,
-                colour: draft.colour,
-                rectangles,
-            })
-            setError('')
-        } catch (submitError) {
-            setResult(null)
-            setError(submitError.message)
-        }
-    }
-
-    const handleChangeInput = (event) => {
-        const { name, value } = event.target
-
-        clearResult()
-        setDraft((current) => ({ ...current, [name]: value }))
-    }
-
-    const handleClickClear = () => {
-        setDraft({
-            asciiArt: '',
-            corner: '',
-            colour: initialArtwork.colour,
-        })
-        clearResult()
-    }
-
-    const handleClickInit = () => {
-        setDraft(initialArtwork)
-        clearResult()
-    }
+    const playState = getPlayState(session)
+    const focusedIndex = playState.foundRectangles.findIndex((rectangle) => {
+        return sameRectangle(rectangle, playState.focusedRectangle)
+    })
 
     const handleSelectCorner = (corner) => {
-        setHuntSession((current) => selectCorner(current, corner))
+        setSession((current) => selectCorner(current, corner))
     }
 
     const handleCancelSelection = () => {
-        setHuntSession((current) => cancelSelection(current))
+        setSession((current) => cancelSelection(current))
     }
 
-    const huntState = getPlayState(huntSession)
-
     return (
-        <>
-            <h2>Rectangle Hunt</h2>
+        <section className="rectangle-hunt" aria-labelledby="rectangle-hunt-title">
+            <div className="hunt-heading">
+                <div>
+                    <h2 id="rectangle-hunt-title">Rectangle Hunt</h2>
+                    <p className="hunt-progress">{foundLabel(playState.foundCount)}</p>
+                </div>
+                <button
+                    type="button"
+                    className="restart-button"
+                    onClick={() => setSession((current) => restartSession(current))}
+                >
+                    Restart
+                </button>
+            </div>
+
             <FixedBoardSelector
-                selectedCorner={huntState.selectedCorner}
+                selectedCorner={playState.selectedCorner}
+                foundRectangles={playState.foundRectangles}
+                focusedRectangle={playState.focusedRectangle}
                 onSelectCorner={handleSelectCorner}
                 onCancelSelection={handleCancelSelection}
             />
-            <div id="seperator">&nbsp;</div>
-            <h2>{UIText.appTitleHome}</h2>
-            <div id="seperator">&nbsp;</div>
-            <form onSubmit={handleSubmit}>
-                <div id="input-grid">
-                    <div id="input-ascii">
-                        <label id="ascii-label" htmlFor="asciiArt">{UIText.inputText}:</label>
-                        <textarea
-                            className="art-input"
-                            id="asciiArt"
-                            name="asciiArt"
-                            value={draft.asciiArt}
-                            required
-                            onChange={handleChangeInput}
-                            aria-invalid={Boolean(error)}
-                            aria-describedby={error ? 'board-error' : undefined}
-                        />
-                        {error && (
-                            <p id="board-error" role="alert">{error}</p>
-                        )}
+
+            <p
+                className="hunt-feedback"
+                role="status"
+                aria-label="Game status"
+                aria-live="polite"
+            >
+                {feedbackMessage(playState)}
+            </p>
+
+            {playState.foundCount > 0 && (
+                <section className="discovery-review" aria-labelledby="discovery-title">
+                    <h3 id="discovery-title">Review discoveries</h3>
+                    <div className="review-controls">
+                        <button
+                            type="button"
+                            disabled={playState.foundCount < 2}
+                            onClick={() => setSession((current) => focusPreviousRectangle(current))}
+                        >
+                            Previous
+                        </button>
+                        <output aria-label="Discovery position" aria-live="polite">
+                            Discovery {focusedIndex + 1} of {playState.foundCount}
+                        </output>
+                        <button
+                            type="button"
+                            disabled={playState.foundCount < 2}
+                            onClick={() => setSession((current) => focusNextRectangle(current))}
+                        >
+                            Next
+                        </button>
                     </div>
-                    <div id="info">
-                        <div id="input-corner">
-                            <label id="corner-label" htmlFor="corner">{UIText.inputCorner}:</label>
-                            <input
-                                className="corner-input"
-                                type="text"
-                                id="corner"
-                                name="corner"
-                                required
-                                maxLength="1"
-                                onChange={handleChangeInput}
-                                value={draft.corner}
-                            />
-                        </div>
-                        <div id="input-colour">
-                            <label id="colour-label" htmlFor="colour">{UIText.inputColour}:</label>
-                            <input
-                                className="colour-input"
-                                type="color"
-                                id="colour"
-                                name="colour"
-                                value={draft.colour}
-                                onChange={handleChangeInput}
-                            />
-                        </div>
-                        <div id="form-buttons">
-                            <button type="submit">{UIText.buttonSubmit}</button>
-                            <button type="button" onClick={handleClickClear}>
-                                {UIText.buttonClear}
-                            </button>
-                            <button type="button" onClick={handleClickInit}>
-                                {UIText.buttonInit}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="seperator">&nbsp;</div>
-            </form>
-            {result && <Solution result={result} />}
-        </>
+                </section>
+            )}
+
+            {playState.status === 'complete' && (
+                <section className="completion-panel" aria-labelledby="completion-title">
+                    <h3 id="completion-title">Puzzle complete!</h3>
+                    <p>The drawing contains {playState.total} rectangles.</p>
+                </section>
+            )}
+        </section>
     )
 }

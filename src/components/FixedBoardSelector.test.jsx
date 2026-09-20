@@ -114,6 +114,24 @@ describe('FixedBoardSelector', () => {
     expect(candidate).toHaveAttribute('data-corner-state', 'available')
   })
 
+  test('distinguishes focused and earlier discoveries structurally', () => {
+    const { container } = render(
+      <FixedBoardSelector
+        {...defaultProps}
+        foundRectangles={[
+          { top: 0, left: 3, bottom: 2, right: 6 },
+          { top: 2, left: 0, bottom: 4, right: 3 },
+        ]}
+        focusedRectangle={{ top: 2, left: 0, bottom: 4, right: 3 }}
+      />
+    )
+
+    expect(container.querySelectorAll('[data-rectangle-state="found"]'))
+      .toHaveLength(1)
+    expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
+      .toHaveLength(1)
+  })
+
   test('renders board characters as text rather than markup', () => {
     const unsafeBoard = '<img src=x onerror=alert(1)>+'
     const { container } = render(

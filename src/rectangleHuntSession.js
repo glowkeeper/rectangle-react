@@ -158,6 +158,33 @@ export const restartSession = (session) => {
   return initialSession(session.board, session.cornerCharacter)
 }
 
+const focusRectangleByOffset = (session, offset) => {
+  const foundKeys = [...session.foundKeys]
+  const currentIndex = foundKeys.indexOf(session.focusedKey)
+
+  if (currentIndex === -1 || foundKeys.length < 2) {
+    return session
+  }
+
+  const nextIndex = (currentIndex + offset + foundKeys.length) % foundKeys.length
+  const focusedKey = foundKeys[nextIndex]
+  const rectangle = session.rectanglesByKey.get(focusedKey)
+
+  return {
+    ...session,
+    focusedKey,
+    selectionResult: { type: 'review', rectangle: cloneRectangle(rectangle) },
+  }
+}
+
+export const focusPreviousRectangle = (session) => {
+  return focusRectangleByOffset(session, -1)
+}
+
+export const focusNextRectangle = (session) => {
+  return focusRectangleByOffset(session, 1)
+}
+
 export const getPlayState = (session) => {
   const complete = session.foundKeys.size === session.rectanglesByKey.size
   const foundRectangles = [...session.foundKeys].map((key) => {
