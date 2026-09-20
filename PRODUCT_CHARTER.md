@@ -8,13 +8,14 @@ player finds them by selecting two diagonally opposite corners.
 
 A valid, previously undiscovered rectangle is recorded and highlighted. An
 invalid corner pair is not recorded or punished. Selecting an already-found
-rectangle does not count it twice. The puzzle ends when every rectangle has
-been found.
+rectangle does not count it twice. The player decides when to finish the hunt
+and reveal the answer.
 
-The total number of rectangles remains hidden during play. The player sees how
-many they have found, not how many remain. Completion reveals the final total.
-Players can review their discoveries one at a time so that overlapping
-rectangles do not obscure the drawing.
+The total number of rectangles and whether the full set has been found remain
+hidden during play. The player sees how many they have found, not how many
+remain. Submitting the hunt reveals the final total. Players can review their
+discoveries one at a time so that overlapping rectangles do not obscure the
+drawing.
 
 ## Interaction principles
 

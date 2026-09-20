@@ -75,7 +75,7 @@ describe('Rectangle Hunt game loop', () => {
         expect(screen.getByText('Discovery 2 of 2')).toBeInTheDocument()
     })
 
-    test('reveals the total only after the final rectangle and can restart', () => {
+    test('does not reveal completion after the final rectangle and can restart', () => {
         render(<Artwork />)
         const rectangles = [
             [[1, 4], [3, 7]],
@@ -89,8 +89,8 @@ describe('Rectangle Hunt game loop', () => {
         rectangles.forEach(([first, second]) => selectRectangle(first, second))
 
         expect(screen.getByRole('status', { name: 'Game status' }))
-            .toHaveTextContent('Puzzle complete! You found all 6 rectangles.')
-        expect(screen.queryByLabelText('6 rectangles found')).not.toBeInTheDocument()
+            .toHaveTextContent('Found a new rectangle.')
+        expect(screen.getByLabelText('6 rectangles found')).toHaveTextContent('6 found')
         expect(screen.queryByText('The drawing contains 6 rectangles.'))
             .not.toBeInTheDocument()
 

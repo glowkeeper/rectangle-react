@@ -8,6 +8,7 @@ import {
   rectangleKey,
   restartSession,
   selectCorner,
+  submitSession,
 } from './rectangleHuntSession'
 
 const ONE_RECTANGLE = '+-+\n| |\n+-+'
@@ -168,43 +169,79 @@ describe('Rectangle Hunt selection', () => {
 })
 
 describe('Rectangle Hunt lifecycle', () => {
-  test('the total is hidden during play and revealed on completion', () => {
+  test('the total remains hidden after every rectangle has been found', () => {
     const startState = getPlayState(createRectangleHuntSession(ONE_RECTANGLE))
 
     expect(startState).toMatchObject({ status: 'playing', foundCount: 0 })
     expect(startState).not.toHaveProperty('total')
 
-    const completedSession = choose(
+    const allFoundSession = choose(
       createRectangleHuntSession(ONE_RECTANGLE),
       { row: 0, column: 0 },
       { row: 2, column: 2 }
     )
 
-    expect(getPlayState(completedSession)).toMatchObject({
-      status: 'complete',
+    expect(getPlayState(allFoundSession)).toMatchObject({
+      status: 'playing',
       foundCount: 1,
-      total: 1,
     })
+    expect(getPlayState(allFoundSession)).not.toHaveProperty('total')
   })
 
-  test('completion is derived only after the final outstanding find', () => {
+  test('submission reveals and freezes an incomplete result', () => {
     const firstFind = choose(
       createRectangleHuntSession(TWO_RECTANGLES),
       { row: 0, column: 0 },
       { row: 2, column: 2 }
     )
-    const completed = choose(
-      firstFind,
-      { row: 0, column: 4 },
-      { row: 2, column: 6 }
-    )
+    const submitted = submitSession(firstFind)
+    const attemptedFind = choose(submitted, { row: 0, column: 4 }, { row: 2, column: 6 })
 
     expect(getPlayState(firstFind)).not.toHaveProperty('total')
-    expect(getPlayState(completed)).toMatchObject({
-      status: 'complete',
+    expect(getPlayState(submitted)).toMatchObject({
+      status: 'submitted',
+      foundCount: 1,
+      total: 2,
+      foundRectangles: [{ top: 0, left: 0, bottom: 2, right: 2 }],
+      missedRectangles: [{ top: 0, left: 4, bottom: 2, right: 6 }],
+    })
+    expect(attemptedFind).toBe(submitted)
+  })
+
+  test('submission reveals an all-found result without signalling it beforehand', () => {
+    const firstFind = choose(
+      createRectangleHuntSession(TWO_RECTANGLES),
+      { row: 0, column: 0 },
+      { row: 2, column: 2 }
+    )
+    const allFound = choose(firstFind, { row: 0, column: 4 }, { row: 2, column: 6 })
+
+    expect(getPlayState(allFound)).toMatchObject({ status: 'playing', foundCount: 2 })
+    expect(getPlayState(allFound)).not.toHaveProperty('total')
+
+    expect(getPlayState(submitSession(allFound))).toMatchObject({
+      status: 'submitted',
       foundCount: 2,
       total: 2,
+      missedRectangles: [],
     })
+  })
+
+  test('submitting is idempotent', () => {
+    const submitted = submitSession(createRectangleHuntSession(ONE_RECTANGLE))
+
+    expect(submitSession(submitted)).toBe(submitted)
+  })
+
+  test('public submitted results cannot mutate session state', () => {
+    const submitted = submitSession(createRectangleHuntSession(ONE_RECTANGLE))
+    const publicState = getPlayState(submitted)
+
+    publicState.missedRectangles[0].bottom = 99
+
+    expect(getPlayState(submitted).missedRectangles).toEqual([
+      { top: 0, left: 0, bottom: 2, right: 2 },
+    ])
   })
 
   test('cancelling clears an incomplete selection and preserves progress', () => {
@@ -225,12 +262,12 @@ describe('Rectangle Hunt lifecycle', () => {
   })
 
   test('restarting returns the same board to its initial play state', () => {
-    const completed = choose(
+    const submitted = submitSession(choose(
       createRectangleHuntSession(ONE_RECTANGLE),
       { row: 0, column: 0 },
       { row: 2, column: 2 }
-    )
-    const restarted = restartSession(completed)
+    ))
+    const restarted = restartSession(submitted)
 
     expect(getPlayState(restarted)).toEqual({
       status: 'playing',
@@ -270,11 +307,18 @@ describe('Rectangle Hunt lifecycle', () => {
       .toEqual({ top: 0, left: 0, bottom: 2, right: 2 })
   })
 
-  test('a board without rectangles is already complete', () => {
+  test('a board without rectangles remains playing until submitted', () => {
     expect(getPlayState(createRectangleHuntSession('+'))).toMatchObject({
-      status: 'complete',
+      status: 'playing',
+      foundCount: 0,
+    })
+    expect(getPlayState(createRectangleHuntSession('+'))).not.toHaveProperty('total')
+
+    expect(getPlayState(submitSession(createRectangleHuntSession('+')))).toMatchObject({
+      status: 'submitted',
       foundCount: 0,
       total: 0,
+      missedRectangles: [],
     })
   })
 })
