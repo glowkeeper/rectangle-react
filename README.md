@@ -2,14 +2,15 @@
 
 Rectangles is evolving from a React exploration of the
 [Exercism rectangles problem](https://exercism.org/tracks/javascript/exercises/rectangles)
-into **Rectangle Hunt**, a visual-search game about finding every rectangle
-hidden in a fixed line drawing.
+into **Rectangle Hunt**, an untimed visual-search game about finding rectangles
+hidden in fixed line drawings.
 
-The current application presents one fixed drawing without revealing its
-rectangle total. Players select opposite corners, build a set of discoveries,
-review overlapping rectangles one at a time, and complete the hunt when every
-solver-produced rectangle has been found. Its rectangle engine and game-session
-rules remain pure and independent of the React presentation.
+The current application offers a small curated puzzle library without revealing
+rectangle totals. Players select opposite corners, build a set of discoveries,
+and decide when to submit. Submission reveals the answer and allows found and
+missed rectangles to be reviewed one at a time. Unfinished hunts can be resumed
+from local browser storage. The rectangle engine and game-session rules remain
+pure and independent of the React presentation.
 
 ## Development
 
@@ -31,6 +32,7 @@ npm run build
 - [Architecture](docs/architecture.md)
 - [Project workflow](docs/project-workflow.md)
 - [First-playable verification](docs/first-playable-verification.md)
+- [Untimed journey verification](docs/untimed-journey-verification.md)
 - [AI collaboration guide](AGENTS.md)
 - [GitHub project board](https://github.com/users/glowkeeper/projects/28)
 
