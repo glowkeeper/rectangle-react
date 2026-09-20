@@ -19,7 +19,14 @@ export const App = () => {
     return (    
         <>
             <header>
-                <pre><h1>{UIText.appTitle}</h1></pre>
+                <h1 className="wordmark" aria-label={UIText.appTitleCompact}>
+                    <span className="wordmark-full" aria-hidden="true">
+                        {UIText.appTitle}
+                    </span>
+                    <span className="wordmark-compact" aria-hidden="true">
+                        {UIText.appTitleCompact}
+                    </span>
+                </h1>
                 <nav>
                     <Link to={LocalRoutes.home}>{UIText.linkHome}</Link>
                     <Link to={LocalRoutes.about}>{UIText.linkAbout}</Link>
@@ -37,6 +44,15 @@ export const App = () => {
                     />
                 </Routes>
             </main>
+            <footer>
+                <p>
+                    &copy; 2026{' '}
+                    <a href="https://huckle.studio/">Steve Huckle</a>
+                </p>
+                <p className="privacy-note">
+                    Privacy: no cookies, accounts, analytics, or personal data collection.
+                </p>
+            </footer>
         </>
     )
 }

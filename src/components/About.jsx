@@ -1,49 +1,32 @@
 import { UIText } from '../config'
 
-const exercismExample = `   +--+
-  ++  |
-+-++--+
-|  |  |
-+--+--+`
-
-const ambitiousExample = `+---+--+----+
-|   +--+----+
-+---+--+    |
-|   +--+----+
-+---+--+--+-+
-+---+--+--+-+
-+------+  | |
-          +-+`
-
 export const About = () => {
     return (
-        <>
+        <article className="about-page">
             <h2>{UIText.appTitleAbout}</h2>
-            <div id="seperator">&nbsp;</div>
             <p>
-                This is an app that offers solutions to Exercism&apos;s{' '}
+                Rectangle Hunt is a visual-search game hidden inside a line drawing.
+                Find every rectangle by choosing two diagonally opposite corners.
+            </p>
+            <p>
+                Each new discovery is highlighted and added to the review controls.
+                The total stays secret until you have found them all, so the drawing
+                remains a puzzle rather than a checklist.
+            </p>
+            <p>
+                The game runs entirely in your browser and does not require an
+                account. It grew from the rectangle-finding problem on{' '}
                 <a href="https://exercism.org/tracks/javascript/exercises/rectangles/">
-                    rectangles problem
+                    Exercism
+                </a>
+                .
+            </p>
+            <p>
+                Rectangle Hunt is{' '}
+                <a href="https://github.com/glowkeeper/rectangle-react">
+                    open source on GitHub
                 </a>.
             </p>
-            <p>You can input the example offered there:</p>
-            <pre>{exercismExample}</pre>
-            <p>But much more besides, for example:</p>
-            <pre>{ambitiousExample}</pre>
-            <p>
-                You can even copy and paste the app&apos;s title from the top of
-                this page and set the corner to &apos;+&apos; or &apos;-&apos;. 😉
-            </p>
-            <p>
-                &copy; 2021,{' '}
-                <a href="https://glowkeeper.github.io/">Dr Steve Huckle</a>, all
-                rights reserved
-            </p>
-            <p>
-                <a href="https://github.com/glowkeeper/rectangle-react">
-                    View the source on GitHub
-                </a>
-            </p>
-        </>
+        </article>
     )
 }

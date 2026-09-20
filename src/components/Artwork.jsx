@@ -13,8 +13,6 @@ import {
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 
-const foundLabel = (count) => `Found ${count} ${count === 1 ? 'rectangle' : 'rectangles'}.`
-
 const feedbackMessage = (playState) => {
     if (playState.status === 'complete') {
         return `Puzzle complete! You found all ${playState.total} rectangles.`
@@ -59,21 +57,7 @@ export const Artwork = () => {
     }
 
     return (
-        <section className="rectangle-hunt" aria-labelledby="rectangle-hunt-title">
-            <div className="hunt-heading">
-                <div>
-                    <h2 id="rectangle-hunt-title">Rectangle Hunt</h2>
-                    <p className="hunt-progress">{foundLabel(playState.foundCount)}</p>
-                </div>
-                <button
-                    type="button"
-                    className="restart-button"
-                    onClick={() => setSession((current) => restartSession(current))}
-                >
-                    Restart
-                </button>
-            </div>
-
+        <section className="rectangle-hunt" aria-label="Rectangle Hunt">
             <FixedBoardSelector
                 selectedCorner={playState.selectedCorner}
                 foundRectangles={playState.foundRectangles}
@@ -83,7 +67,7 @@ export const Artwork = () => {
             />
 
             <p
-                className="hunt-feedback"
+                className={`hunt-feedback${playState.status === 'complete' ? ' hunt-feedback--complete' : ''}`}
                 role="status"
                 aria-label="Game status"
                 aria-live="polite"
@@ -116,12 +100,15 @@ export const Artwork = () => {
                 </section>
             )}
 
-            {playState.status === 'complete' && (
-                <section className="completion-panel" aria-labelledby="completion-title">
-                    <h3 id="completion-title">Puzzle complete!</h3>
-                    <p>The drawing contains {playState.total} rectangles.</p>
-                </section>
-            )}
+            <div className="hunt-actions">
+                <button
+                    type="button"
+                    className="restart-button"
+                    onClick={() => setSession((current) => restartSession(current))}
+                >
+                    Restart puzzle
+                </button>
+            </div>
         </section>
     )
 }

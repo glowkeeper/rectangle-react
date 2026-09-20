@@ -19,7 +19,7 @@ describe('Rectangle Hunt game loop', () => {
 
         expect(screen.getByRole('group', { name: 'Rectangle Hunt drawing' }))
             .toBeInTheDocument()
-        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.queryByText('Found 0 rectangles.')).not.toBeInTheDocument()
         expect(screen.queryByText(/drawing contains/i)).not.toBeInTheDocument()
         expect(screen.queryByLabelText('art:')).not.toBeInTheDocument()
     })
@@ -29,7 +29,6 @@ describe('Rectangle Hunt game loop', () => {
 
         selectRectangle([1, 4], [3, 7])
 
-        expect(screen.getByText('Found 1 rectangle.')).toBeInTheDocument()
         expect(screen.getByRole('status', { name: 'Game status' }))
             .toHaveTextContent('Found a new rectangle.')
         expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
@@ -42,7 +41,7 @@ describe('Rectangle Hunt game loop', () => {
 
         selectRectangle([1, 4], [1, 7])
 
-        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.queryByText(/Found \d+ rectangles?\./)).not.toBeInTheDocument()
         expect(screen.getByRole('status', { name: 'Game status' }))
             .toHaveTextContent('That pair does not form a rectangle. Try again.')
     })
@@ -53,7 +52,6 @@ describe('Rectangle Hunt game loop', () => {
         selectRectangle([1, 4], [3, 7])
         selectRectangle([3, 7], [1, 4])
 
-        expect(screen.getByText('Found 1 rectangle.')).toBeInTheDocument()
         expect(screen.getByRole('status', { name: 'Game status' }))
             .toHaveTextContent('Already found. Showing that rectangle.')
         expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
@@ -88,12 +86,13 @@ describe('Rectangle Hunt game loop', () => {
 
         expect(screen.getByRole('status', { name: 'Game status' }))
             .toHaveTextContent('Puzzle complete! You found all 6 rectangles.')
-        expect(screen.getByText('The drawing contains 6 rectangles.'))
-            .toBeInTheDocument()
+        expect(screen.queryByText('The drawing contains 6 rectangles.'))
+            .not.toBeInTheDocument()
 
-        fireEvent.click(screen.getByRole('button', { name: 'Restart' }))
+        fireEvent.click(screen.getByRole('button', { name: 'Restart puzzle' }))
 
-        expect(screen.getByText('Found 0 rectangles.')).toBeInTheDocument()
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('Choose a corner to begin.')
         expect(screen.queryByText(/drawing contains/i)).not.toBeInTheDocument()
     })
 })
