@@ -14,13 +14,23 @@ import {
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 
+export const submittedResultMessage = (foundCount, total) => {
+    if (total === 1) {
+        return foundCount === 1
+            ? 'You found the rectangle.'
+            : 'You did not find the rectangle.'
+    }
+
+    if (foundCount === total) {
+        return `You found all ${total} rectangles.`
+    }
+
+    return `You found ${foundCount} of ${total} rectangles.`
+}
+
 const feedbackMessage = (playState) => {
     if (playState.status === 'submitted') {
-        if (playState.foundCount === playState.total) {
-            return `You found all ${playState.total} rectangles.`
-        }
-
-        return `You found ${playState.foundCount} of ${playState.total} rectangles.`
+        return submittedResultMessage(playState.foundCount, playState.total)
     }
 
     switch (playState.selectionResult?.type) {

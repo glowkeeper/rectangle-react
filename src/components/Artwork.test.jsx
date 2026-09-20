@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import { Artwork } from './Artwork'
+import { Artwork, submittedResultMessage } from './Artwork'
 
 const selectCorner = (row, column) => {
     fireEvent.click(screen.getByRole('button', {
@@ -17,6 +17,16 @@ const openFinishDialog = () => {
     fireEvent.click(screen.getByRole('button', { name: 'Finish hunt' }))
     return screen.getByRole('dialog', { name: 'Finish this hunt?' })
 }
+
+describe('submittedResultMessage', () => {
+    test('uses singular wording when the only rectangle is found', () => {
+        expect(submittedResultMessage(1, 1)).toBe('You found the rectangle.')
+    })
+
+    test('uses singular wording when the only rectangle is missed', () => {
+        expect(submittedResultMessage(0, 1)).toBe('You did not find the rectangle.')
+    })
+})
 
 describe('Rectangle Hunt game loop', () => {
     test('starts on the fixed drawing with a hidden total', () => {
