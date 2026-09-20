@@ -5,10 +5,11 @@ Rectangles is evolving from a React exploration of the
 into **Rectangle Hunt**, a visual-search game about finding every rectangle
 hidden in a fixed line drawing.
 
-The current application accepts an ASCII board, identifies every complete
-rectangle, and lets the player inspect them individually. Its rectangle engine
-is pure, tested against the canonical Exercism cases, and independent of the
-React presentation.
+The current application presents one fixed drawing without revealing its
+rectangle total. Players select opposite corners, build a set of discoveries,
+review overlapping rectangles one at a time, and complete the hunt when every
+solver-produced rectangle has been found. Its rectangle engine and game-session
+rules remain pure and independent of the React presentation.
 
 ## Development
 
@@ -29,6 +30,7 @@ npm run build
 - [Product charter](PRODUCT_CHARTER.md)
 - [Architecture](docs/architecture.md)
 - [Project workflow](docs/project-workflow.md)
+- [First-playable verification](docs/first-playable-verification.md)
 - [AI collaboration guide](AGENTS.md)
 - [GitHub project board](https://github.com/users/glowkeeper/projects/28)
 
