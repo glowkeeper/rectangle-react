@@ -13,8 +13,6 @@ import {
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 
-const foundLabel = (count) => `Found ${count} ${count === 1 ? 'rectangle' : 'rectangles'}.`
-
 const feedbackMessage = (playState) => {
     if (playState.status === 'complete') {
         return `Puzzle complete! You found all ${playState.total} rectangles.`
@@ -38,6 +36,10 @@ const feedbackMessage = (playState) => {
     }
 }
 
+const progressLabel = (count) => {
+    return `${count} ${count === 1 ? 'rectangle' : 'rectangles'} found`
+}
+
 export const Artwork = () => {
     const [session, setSession] = useState(() => {
         return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
@@ -59,21 +61,7 @@ export const Artwork = () => {
     }
 
     return (
-        <section className="rectangle-hunt" aria-labelledby="rectangle-hunt-title">
-            <div className="hunt-heading">
-                <div>
-                    <h2 id="rectangle-hunt-title">Rectangle Hunt</h2>
-                    <p className="hunt-progress">{foundLabel(playState.foundCount)}</p>
-                </div>
-                <button
-                    type="button"
-                    className="restart-button"
-                    onClick={() => setSession((current) => restartSession(current))}
-                >
-                    Restart
-                </button>
-            </div>
-
+        <section className="rectangle-hunt" aria-label="Rectangle Hunt">
             <FixedBoardSelector
                 selectedCorner={playState.selectedCorner}
                 foundRectangles={playState.foundRectangles}
@@ -82,14 +70,24 @@ export const Artwork = () => {
                 onCancelSelection={handleCancelSelection}
             />
 
-            <p
-                className="hunt-feedback"
-                role="status"
-                aria-label="Game status"
-                aria-live="polite"
-            >
-                {feedbackMessage(playState)}
-            </p>
+            <div className={`hunt-status${playState.status === 'complete' ? ' hunt-status--complete' : ''}`}>
+                <p
+                    className="hunt-feedback"
+                    role="status"
+                    aria-label="Game status"
+                    aria-live="polite"
+                >
+                    {feedbackMessage(playState)}
+                </p>
+                {playState.status !== 'complete' && (
+                    <output
+                        className="hunt-progress"
+                        aria-label={progressLabel(playState.foundCount)}
+                    >
+                        {playState.foundCount} found
+                    </output>
+                )}
+            </div>
 
             {playState.foundCount > 0 && (
                 <section className="discovery-review" aria-labelledby="discovery-title">
@@ -116,12 +114,15 @@ export const Artwork = () => {
                 </section>
             )}
 
-            {playState.status === 'complete' && (
-                <section className="completion-panel" aria-labelledby="completion-title">
-                    <h3 id="completion-title">Puzzle complete!</h3>
-                    <p>The drawing contains {playState.total} rectangles.</p>
-                </section>
-            )}
+            <div className="hunt-actions">
+                <button
+                    type="button"
+                    className="restart-button"
+                    onClick={() => setSession((current) => restartSession(current))}
+                >
+                    Restart puzzle
+                </button>
+            </div>
         </section>
     )
 }

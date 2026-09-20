@@ -1,3 +1,25 @@
+const rectangleWordmark = [
+    '+----+ +---+ +---+ +---+    +     ++    + +---+ +     +---+',
+    '|    | |     |       |     / \\    | \\   | |     |     |',
+    '+----+ +--+  |       |    +---+   |  \\  | | +-+ |     +--+',
+    '|  \\   |     |       |   /     \\  |   \\ | |   | |     |',
+    '+    + +---+ +---+   +  +       + +    ++ +---+ +---+ +---+',
+]
+
+const huntWordmark = [
+    '+   + +   + ++    + +---+',
+    '|   | |   | | \\   |   |',
+    '+---+ |   | |  \\  |   |',
+    '|   | |   | |   \\ |   |',
+    '+   + +---+ +    ++   +',
+]
+
+const rectangleWordmarkWidth = Math.max(...rectangleWordmark.map((line) => line.length))
+
+const appWordmark = rectangleWordmark.map((line, index) => {
+    return `${line.padEnd(rectangleWordmarkWidth)}     ${huntWordmark[index]}`
+}).join('\n')
+
 export class LocalRoutes {
     static home = "/rectangle-react"
     static about = `${LocalRoutes.home}/about`
@@ -5,12 +27,9 @@ export class LocalRoutes {
 
 export class UIText {
     static appTabTitle = "rectangles"
-    static appTitle = `+----+ +---+ +---+ +---+    +     ++    + +---+ +     +---+ +---+
-|    | |     |       |     / \\    | \\   | |     |     |     |
-+----+ +--+  |       |    +---+   |  \\  | | +-+ |     +--+  +---+
-|  \\   |     |       |   /     \\  |   \\ | |   | |     |         |
-+    + +---+ +---+   +  +       + +    ++ +---+ +---+ +---+ +---+`
-    static appTitleAbout = "about"
+    static appTitle = appWordmark
+    static appTitleCompact = "Rectangle Hunt"
+    static appTitleAbout = "About Rectangle Hunt"
     static appTitleHome = "count"
 
     static linkHome = "home"
