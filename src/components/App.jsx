@@ -50,7 +50,7 @@ export const App = () => {
                     <a href="https://huckle.studio/">Steve Huckle</a>
                 </p>
                 <p className="privacy-note">
-                    Privacy: no cookies, accounts, analytics, or personal data collection.
+                    Privacy: this game uses no cookies, accounts, or analytics.
                 </p>
             </footer>
         </>
