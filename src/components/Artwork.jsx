@@ -1,16 +1,27 @@
 import { useState } from 'react'
 
 import { Solution } from './Solution'
+import { FixedBoardSelector } from './FixedBoardSelector'
 import { findRectangles } from '../getSolution'
+import {
+    cancelSelection,
+    createRectangleHuntSession,
+    getPlayState,
+    selectCorner,
+} from '../rectangleHuntSession'
+import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 import { UIText } from '../config'
 
 const initialArtwork = {
-    asciiArt: '   +--+\n  ++  |\n+-++--+\n|  |  |\n+--+--+',
-    corner: '+',
+    asciiArt: FIXED_BOARD,
+    corner: FIXED_BOARD_CORNER,
     colour: '#ff0000',
 }
 
 export const Artwork = () => {
+    const [huntSession, setHuntSession] = useState(() => {
+        return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
+    })
     const [draft, setDraft] = useState(initialArtwork)
     const [result, setResult] = useState(null)
     const [error, setError] = useState('')
@@ -59,8 +70,25 @@ export const Artwork = () => {
         clearResult()
     }
 
+    const handleSelectCorner = (corner) => {
+        setHuntSession((current) => selectCorner(current, corner))
+    }
+
+    const handleCancelSelection = () => {
+        setHuntSession((current) => cancelSelection(current))
+    }
+
+    const huntState = getPlayState(huntSession)
+
     return (
         <>
+            <h2>Rectangle Hunt</h2>
+            <FixedBoardSelector
+                selectedCorner={huntState.selectedCorner}
+                onSelectCorner={handleSelectCorner}
+                onCancelSelection={handleCancelSelection}
+            />
+            <div id="seperator">&nbsp;</div>
             <h2>{UIText.appTitleHome}</h2>
             <div id="seperator">&nbsp;</div>
             <form onSubmit={handleSubmit}>
