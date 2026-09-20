@@ -11,12 +11,13 @@ import {
     selectCorner,
     submitSession,
 } from '../rectangleHuntSession'
-import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 import {
-    clearSavedHunt,
+    clearPuzzleProgress,
     loadActiveHunt,
+    markPuzzleSubmitted,
     saveActiveHunt,
 } from '../rectangleHuntPersistence'
+import { DEFAULT_PUZZLE } from '../puzzles'
 
 export const submittedResultMessage = (foundCount, total) => {
     if (total === 1) {
@@ -67,15 +68,21 @@ const browserStorage = () => {
     }
 }
 
-export const Artwork = () => {
+export const Artwork = ({ puzzle = DEFAULT_PUZZLE, onExit, onStatusChange }) => {
     const finishButtonRef = useRef(null)
     const finishDialogRef = useRef(null)
     const [session, setSession] = useState(() => {
-        return loadActiveHunt(browserStorage(), FIXED_BOARD, FIXED_BOARD_CORNER)
+        return loadActiveHunt(
+            browserStorage(),
+            puzzle.board,
+            puzzle.cornerCharacter,
+            puzzle.id
+        )
     })
     useEffect(() => {
-        saveActiveHunt(browserStorage(), session)
-    }, [session])
+        saveActiveHunt(browserStorage(), session, puzzle.id)
+        onStatusChange?.()
+    }, [onStatusChange, puzzle.id, session])
     const playState = getPlayState(session)
     const submitted = playState.status === 'submitted'
     const focusedKey = playState.focusedRectangle === null
@@ -122,18 +129,31 @@ export const Artwork = () => {
 
     const handleSubmit = () => {
         closeFinishDialog()
-        clearSavedHunt(browserStorage())
+        markPuzzleSubmitted(browserStorage(), puzzle.id)
         setSession((current) => submitSession(current))
     }
 
     const handleRestart = () => {
-        clearSavedHunt(browserStorage())
+        clearPuzzleProgress(browserStorage(), puzzle.id)
         setSession((current) => restartSession(current))
     }
 
     return (
-        <section className="rectangle-hunt" aria-label="Rectangle Hunt">
+        <section className="rectangle-hunt" aria-label={`${puzzle.title} puzzle`}>
+            <div className="puzzle-heading">
+                <div>
+                    <p className="difficulty-label">{puzzle.difficulty}</p>
+                    <h2>{puzzle.title}</h2>
+                </div>
+                {onExit && (
+                    <button type="button" onClick={onExit}>
+                        Back to puzzles
+                    </button>
+                )}
+            </div>
             <FixedBoardSelector
+                board={puzzle.board}
+                cornerCharacter={puzzle.cornerCharacter}
                 selectedCorner={playState.selectedCorner}
                 foundRectangles={playState.foundRectangles}
                 focusedRectangle={playState.focusedRectangle}
