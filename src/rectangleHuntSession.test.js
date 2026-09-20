@@ -227,6 +227,42 @@ describe('Rectangle Hunt lifecycle', () => {
     })
   })
 
+  test('submission reviews found and missed rectangles without changing the score', () => {
+    const found = choose(
+      createRectangleHuntSession(TWO_RECTANGLES),
+      { row: 0, column: 0 },
+      { row: 2, column: 2 }
+    )
+    const submitted = submitSession(found)
+    const missed = focusNextRectangle(submitted)
+    const foundAgain = focusPreviousRectangle(missed)
+
+    expect(getPlayState(submitted)).toMatchObject({
+      foundCount: 1,
+      focusedRectangleResult: 'found',
+      focusedRectangle: { top: 0, left: 0, bottom: 2, right: 2 },
+    })
+    expect(getPlayState(missed)).toMatchObject({
+      foundCount: 1,
+      focusedRectangleResult: 'missed',
+      focusedRectangle: { top: 0, left: 4, bottom: 2, right: 6 },
+    })
+    expect(getPlayState(foundAgain)).toMatchObject({
+      foundCount: 1,
+      focusedRectangleResult: 'found',
+    })
+  })
+
+  test('submission focuses a missed rectangle when none were found', () => {
+    const submitted = submitSession(createRectangleHuntSession(ONE_RECTANGLE))
+
+    expect(getPlayState(submitted)).toMatchObject({
+      foundCount: 0,
+      focusedRectangleResult: 'missed',
+      focusedRectangle: { top: 0, left: 0, bottom: 2, right: 2 },
+    })
+  })
+
   test('submitting is idempotent', () => {
     const submitted = submitSession(createRectangleHuntSession(ONE_RECTANGLE))
 

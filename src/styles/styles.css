@@ -244,13 +244,27 @@ input.colour-input {
 
 .rectangle-highlight--focused {
   z-index: 2;
-  border: 4px double var(--accent);
   background: repeating-linear-gradient(
     135deg,
     transparent,
     transparent 0.65rem,
     rgba(143, 37, 37, 0.1) 0.65rem,
     rgba(143, 37, 37, 0.1) 0.9rem
+  );
+}
+
+.rectangle-highlight--focused-found {
+  border: 4px double var(--accent);
+}
+
+.rectangle-highlight--focused-missed {
+  border: 4px dashed var(--focus);
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 0.65rem,
+    rgba(7, 94, 168, 0.12) 0.65rem,
+    rgba(7, 94, 168, 0.12) 0.9rem
   );
 }
 
@@ -377,7 +391,29 @@ input.colour-input {
 }
 
 .review-controls output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
   text-align: center;
+}
+
+.result-kind {
+  padding: 0.2rem 0.5rem;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.result-kind--found {
+  border-style: double;
+  color: var(--accent);
+}
+
+.result-kind--missed {
+  border-style: dashed;
+  color: var(--focus);
 }
 
 .review-controls button {
