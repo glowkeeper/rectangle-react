@@ -29,6 +29,7 @@ export const FixedBoardSelector = ({
   selectedCorner = null,
   foundRectangles = [],
   focusedRectangle = null,
+  focusedRectangleResult = 'found',
   onSelectCorner,
   onCancelSelection,
   disabled = false,
@@ -41,9 +42,24 @@ export const FixedBoardSelector = ({
   const focusedKey = focusedRectangle === null
     ? null
     : rectangleCoordinatesKey(focusedRectangle)
-  const orderedRectangles = [...foundRectangles].sort((first, second) => {
-    const firstFocused = rectangleCoordinatesKey(first) === focusedKey
-    const secondFocused = rectangleCoordinatesKey(second) === focusedKey
+  const displayRectangles = foundRectangles.map((rectangle) => ({
+    rectangle,
+    result: 'found',
+  }))
+
+  if (
+    focusedRectangle !== null
+    && !foundRectangles.some((rectangle) => rectangleCoordinatesKey(rectangle) === focusedKey)
+  ) {
+    displayRectangles.push({
+      rectangle: focusedRectangle,
+      result: focusedRectangleResult,
+    })
+  }
+
+  const orderedRectangles = displayRectangles.sort((first, second) => {
+    const firstFocused = rectangleCoordinatesKey(first.rectangle) === focusedKey
+    const secondFocused = rectangleCoordinatesKey(second.rectangle) === focusedKey
 
     return Number(firstFocused) - Number(secondFocused)
   })
@@ -98,17 +114,18 @@ export const FixedBoardSelector = ({
           className="rectangle-board-grid"
           style={{ '--board-columns': columns }}
         >
-          {orderedRectangles.map((rectangle) => {
+          {orderedRectangles.map(({ rectangle, result }) => {
             const key = rectangleCoordinatesKey(rectangle)
             const focused = key === focusedKey
 
             return (
               <span
                 className={focused
-                  ? 'rectangle-highlight rectangle-highlight--focused'
+                  ? `rectangle-highlight rectangle-highlight--focused rectangle-highlight--focused-${result}`
                   : 'rectangle-highlight rectangle-highlight--found'}
                 aria-hidden="true"
                 data-rectangle-state={focused ? 'focused' : 'found'}
+                data-rectangle-result={result}
                 key={key}
                 style={{
                   gridColumn: `${rectangle.left + 1} / ${rectangle.right + 2}`,

@@ -144,6 +144,23 @@ describe('FixedBoardSelector', () => {
       .toHaveAttribute('data-rectangle-state', 'focused')
   })
 
+  test('renders a focused missed rectangle with a distinct structure', () => {
+    const { container } = render(
+      <FixedBoardSelector
+        {...defaultProps}
+        foundRectangles={[{ top: 0, left: 3, bottom: 2, right: 6 }]}
+        focusedRectangle={{ top: 2, left: 0, bottom: 4, right: 3 }}
+        focusedRectangleResult="missed"
+      />
+    )
+    const focused = container.querySelector('[data-rectangle-state="focused"]')
+
+    expect(focused).toHaveClass('rectangle-highlight--focused-missed')
+    expect(focused).toHaveAttribute('data-rectangle-result', 'missed')
+    expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
+      .toHaveLength(1)
+  })
+
   test('renders board characters as text rather than markup', () => {
     const unsafeBoard = '<img src=x onerror=alert(1)>+'
     const { container } = render(

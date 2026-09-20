@@ -164,24 +164,40 @@ export const restartSession = (session) => {
 export const submitSession = (session) => {
   if (session.submittedFoundKeys !== null) return session
 
+  const submittedFoundKeys = new Set(session.foundKeys)
+  const firstResultKey = submittedFoundKeys.values().next().value
+    ?? session.rectanglesByKey.keys().next().value
+    ?? null
+
   return {
     ...session,
-    submittedFoundKeys: new Set(session.foundKeys),
+    submittedFoundKeys,
     selectedCorner: null,
+    focusedKey: session.focusedKey ?? firstResultKey,
     selectionResult: null,
   }
 }
 
-const focusRectangleByOffset = (session, offset) => {
-  const foundKeys = [...session.foundKeys]
-  const currentIndex = foundKeys.indexOf(session.focusedKey)
+const reviewKeys = (session) => {
+  if (session.submittedFoundKeys === null) return [...session.foundKeys]
 
-  if (currentIndex === -1 || foundKeys.length < 2) {
+  const missedKeys = [...session.rectanglesByKey.keys()].filter((key) => {
+    return !session.submittedFoundKeys.has(key)
+  })
+
+  return [...session.submittedFoundKeys, ...missedKeys]
+}
+
+const focusRectangleByOffset = (session, offset) => {
+  const keys = reviewKeys(session)
+  const currentIndex = keys.indexOf(session.focusedKey)
+
+  if (currentIndex === -1 || keys.length < 2) {
     return session
   }
 
-  const nextIndex = (currentIndex + offset + foundKeys.length) % foundKeys.length
-  const focusedKey = foundKeys[nextIndex]
+  const nextIndex = (currentIndex + offset + keys.length) % keys.length
+  const focusedKey = keys[nextIndex]
   const rectangle = session.rectanglesByKey.get(focusedKey)
 
   return {
@@ -222,6 +238,9 @@ export const getPlayState = (session) => {
     playState.missedRectangles = [...session.rectanglesByKey]
       .filter(([key]) => !session.submittedFoundKeys.has(key))
       .map(([, rectangle]) => cloneRectangle(rectangle))
+    playState.focusedRectangleResult = session.focusedKey === null
+      ? null
+      : session.submittedFoundKeys.has(session.focusedKey) ? 'found' : 'missed'
   }
 
   return playState

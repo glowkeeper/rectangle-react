@@ -66,9 +66,19 @@ export const Artwork = () => {
     const focusedKey = playState.focusedRectangle === null
         ? null
         : rectangleCoordinatesKey(playState.focusedRectangle)
-    const focusedIndex = playState.foundRectangles.findIndex((rectangle) => {
+    const reviewRectangles = submitted
+        ? [
+            ...playState.foundRectangles.map((rectangle) => ({ rectangle, result: 'found' })),
+            ...playState.missedRectangles.map((rectangle) => ({ rectangle, result: 'missed' })),
+        ]
+        : playState.foundRectangles.map((rectangle) => ({ rectangle, result: 'found' }))
+    const focusedIndex = reviewRectangles.findIndex(({ rectangle }) => {
         return rectangleCoordinatesKey(rectangle) === focusedKey
     })
+    const focusedResult = focusedIndex === -1
+        ? null
+        : reviewRectangles[focusedIndex].result
+    const reviewCount = reviewRectangles.length
 
     const handleSelectCorner = (corner) => {
         setSession((current) => selectCorner(current, corner))
@@ -106,6 +116,7 @@ export const Artwork = () => {
                 selectedCorner={playState.selectedCorner}
                 foundRectangles={playState.foundRectangles}
                 focusedRectangle={playState.focusedRectangle}
+                focusedRectangleResult={focusedResult ?? 'found'}
                 onSelectCorner={handleSelectCorner}
                 onCancelSelection={handleCancelSelection}
                 disabled={submitted}
@@ -130,23 +141,38 @@ export const Artwork = () => {
                 )}
             </div>
 
-            {playState.foundCount > 0 && (
+            {reviewCount > 0 && (
                 <section className="discovery-review" aria-labelledby="discovery-title">
-                    <h3 id="discovery-title">Review discoveries</h3>
+                    <h3 id="discovery-title">
+                        {submitted ? 'Review result' : 'Review discoveries'}
+                    </h3>
                     <div className="review-controls">
                         <button
                             type="button"
-                            disabled={playState.foundCount < 2}
+                            disabled={reviewCount < 2}
                             onClick={() => setSession((current) => focusPreviousRectangle(current))}
                         >
                             Previous
                         </button>
-                        <output aria-label="Discovery position" aria-live="polite">
-                            Discovery {focusedIndex + 1} of {playState.foundCount}
+                        <output
+                            aria-label={submitted
+                                ? `${focusedResult === 'found' ? 'Found by you' : 'Missed'}, rectangle ${focusedIndex + 1} of ${reviewCount}`
+                                : `Discovery ${focusedIndex + 1} of ${reviewCount}`}
+                            aria-live="polite"
+                        >
+                            {submitted && (
+                                <span className={`result-kind result-kind--${focusedResult}`}>
+                                    {focusedResult === 'found' ? 'Found by you' : 'Missed'}
+                                </span>
+                            )}
+                            <span>
+                                {submitted ? 'Rectangle' : 'Discovery'}{' '}
+                                {focusedIndex + 1} of {reviewCount}
+                            </span>
                         </output>
                         <button
                             type="button"
-                            disabled={playState.foundCount < 2}
+                            disabled={reviewCount < 2}
                             onClick={() => setSession((current) => focusNextRectangle(current))}
                         >
                             Next

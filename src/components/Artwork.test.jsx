@@ -106,7 +106,7 @@ describe('Rectangle Hunt game loop', () => {
     })
 
     test('submitting an incomplete hunt reveals the result and ends selection', () => {
-        render(<Artwork />)
+        const { container } = render(<Artwork />)
         selectRectangle([1, 4], [3, 7])
 
         openFinishDialog()
@@ -119,6 +119,23 @@ describe('Rectangle Hunt game loop', () => {
         expect(screen.queryByLabelText('1 rectangle found')).not.toBeInTheDocument()
         expect(screen.getByRole('button', { name: /Corner at row 1, column 4/ }))
             .toBeDisabled()
+        expect(screen.getByRole('heading', { name: 'Review result' })).toBeInTheDocument()
+        expect(screen.getByLabelText('Found by you, rectangle 1 of 6'))
+            .toBeInTheDocument()
+
+        fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+
+        expect(screen.getByLabelText('Missed, rectangle 2 of 6')).toBeInTheDocument()
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('You found 1 of 6 rectangles.')
+        expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
+            .toHaveLength(1)
+        expect(container.querySelector('[data-rectangle-state="focused"]'))
+            .toHaveAttribute('data-rectangle-result', 'missed')
+
+        fireEvent.click(screen.getByRole('button', { name: 'Previous' }))
+        expect(screen.getByLabelText('Found by you, rectangle 1 of 6'))
+            .toBeInTheDocument()
     })
 
     test('does not reveal completion after the final rectangle and can restart', () => {
@@ -147,6 +164,9 @@ describe('Rectangle Hunt game loop', () => {
             .toHaveTextContent('You found all 6 rectangles.')
         expect(screen.queryByRole('button', { name: 'Finish hunt' }))
             .not.toBeInTheDocument()
+        expect(screen.getByLabelText('Found by you, rectangle 6 of 6'))
+            .toBeInTheDocument()
+        expect(screen.queryByText('Missed')).not.toBeInTheDocument()
 
         fireEvent.click(screen.getByRole('button', { name: 'Restart puzzle' }))
 
