@@ -26,9 +26,9 @@ git diff --check
 ```
 
 The suite exercises every curated puzzle as both an all-found and incomplete
-submission. After every discovery—including the final one—the feedback and
-available controls remain identical and no result review appears. Only explicit
-submission exposes the total. The suite also covers found/missed review,
+submission. After every discovery—including the final one—the total and result
+review remain hidden, while the found count and discovery review update normally.
+Only explicit submission exposes the total. The suite also covers found/missed review,
 per-puzzle status, interruption and restoration, restart, corrupt storage,
 pointer activation, native keyboard-operable controls, Escape cancellation,
 accessible names, live feedback, solver regression, safety, and performance.
@@ -40,7 +40,13 @@ accessible names, live feedback, solver regression, safety, and performance.
 | Library selection and Easy submission | Desktop | Pointer | Pass |
 | Medium complete hunt and result review | Desktop | Keyboard | Pass |
 | Hard incomplete hunt and missed review | 390 × 844 CSS pixels | Pointer/touch-equivalent | Pass |
-| Interrupted hunt, refresh, library return, and resume | Desktop and phone | Pointer | Pass |
+| Interrupted hunt, refresh, library return, and resume | Phone | Pointer | Pass |
+| Interrupted hunt, browser close/reopen, and resume | Desktop | Pointer | Pass |
+
+For the close/reopen check, Woven Grid was left in progress with two
+discoveries, the game tab was closed, and a new tab was opened to the app. The
+library showed Woven Grid as In progress; Resume Woven Grid restored the
+two-rectangle found count.
 
 The phone-width library stacks its cards in one column. Puzzle headings,
 drawing, feedback, review, and actions stay within the page width; wide drawing

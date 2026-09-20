@@ -35,7 +35,10 @@ describe.each(PUZZLES)('$title complete journey', (puzzle) => {
       selectRectangle(rectangle)
 
       expect(screen.getByRole('status', { name: 'Game status' }))
-        .toHaveTextContent('Found a new rectangle.')
+        .toHaveTextContent(/^Found a new rectangle\.$/)
+      expect(screen.queryByText(
+        /You found all|You found \d+ of \d+|drawing contains/i
+      )).not.toBeInTheDocument()
       expect(screen.getByLabelText(
         `${index + 1} ${index === 0 ? 'rectangle' : 'rectangles'} found`
       )).toBeInTheDocument()
