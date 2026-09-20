@@ -1,6 +1,11 @@
+import { beforeEach } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { Artwork, submittedResultMessage } from './Artwork'
+
+beforeEach(() => {
+    window.localStorage.clear()
+})
 
 const selectCorner = (row, column) => {
     fireEvent.click(screen.getByRole('button', {
@@ -52,6 +57,33 @@ describe('Rectangle Hunt game loop', () => {
         expect(container.querySelectorAll('[data-rectangle-state="focused"]'))
             .toHaveLength(1)
         expect(screen.getByText('Discovery 1 of 1')).toBeInTheDocument()
+    })
+
+    test('restores an unfinished hunt after remounting', () => {
+        const firstRender = render(<Artwork />)
+        selectRectangle([1, 4], [3, 7])
+        selectCorner(5, 1)
+        firstRender.unmount()
+
+        render(<Artwork />)
+
+        expect(screen.getByLabelText('1 rectangle found')).toHaveTextContent('1 found')
+        expect(screen.getByRole('status', { name: 'Game status' }))
+            .toHaveTextContent('First corner selected. Choose the opposite corner.')
+        expect(screen.getByRole('button', {
+            name: 'Corner at row 5, column 1, first corner selected',
+        })).toHaveAttribute('data-corner-state', 'selected')
+    })
+
+    test('restart clears the saved attempt', () => {
+        const firstRender = render(<Artwork />)
+        selectRectangle([1, 4], [3, 7])
+        fireEvent.click(screen.getByRole('button', { name: 'Restart puzzle' }))
+        firstRender.unmount()
+
+        render(<Artwork />)
+
+        expect(screen.getByLabelText('0 rectangles found')).toHaveTextContent('0 found')
     })
 
     test('reports an invalid pair without changing progress', () => {

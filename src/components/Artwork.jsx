@@ -1,9 +1,8 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { FixedBoardSelector } from './FixedBoardSelector'
 import {
     cancelSelection,
-    createRectangleHuntSession,
     focusNextRectangle,
     focusPreviousRectangle,
     getPlayState,
@@ -13,6 +12,11 @@ import {
     submitSession,
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
+import {
+    clearSavedHunt,
+    loadActiveHunt,
+    saveActiveHunt,
+} from '../rectangleHuntPersistence'
 
 export const submittedResultMessage = (foundCount, total) => {
     if (total === 1) {
@@ -55,12 +59,23 @@ const progressLabel = (count) => {
     return `${count} ${count === 1 ? 'rectangle' : 'rectangles'} found`
 }
 
+const browserStorage = () => {
+    try {
+        return window.localStorage
+    } catch {
+        return null
+    }
+}
+
 export const Artwork = () => {
     const finishButtonRef = useRef(null)
     const finishDialogRef = useRef(null)
     const [session, setSession] = useState(() => {
-        return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
+        return loadActiveHunt(browserStorage(), FIXED_BOARD, FIXED_BOARD_CORNER)
     })
+    useEffect(() => {
+        saveActiveHunt(browserStorage(), session)
+    }, [session])
     const playState = getPlayState(session)
     const submitted = playState.status === 'submitted'
     const focusedKey = playState.focusedRectangle === null
@@ -107,7 +122,13 @@ export const Artwork = () => {
 
     const handleSubmit = () => {
         closeFinishDialog()
+        clearSavedHunt(browserStorage())
         setSession((current) => submitSession(current))
+    }
+
+    const handleRestart = () => {
+        clearSavedHunt(browserStorage())
+        setSession((current) => restartSession(current))
     }
 
     return (
@@ -195,7 +216,7 @@ export const Artwork = () => {
                 <button
                     type="button"
                     className="restart-button"
-                    onClick={() => setSession((current) => restartSession(current))}
+                    onClick={handleRestart}
                 >
                     Restart puzzle
                 </button>

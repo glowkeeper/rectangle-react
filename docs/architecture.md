@@ -54,6 +54,15 @@ Rectangle Hunt session state
 React board, selection, highlight, and feedback
 ```
 
+Unfinished hunts are saved to browser local storage as a versioned,
+puzzle-specific progress record. Only rectangle identities, the current review
+focus, and an incomplete first corner are persisted; the board and its solution
+remain authoritative application data. Restore validates every saved identity
+and corner against the current puzzle, and corrupt, stale, or incompatible
+records are cleared. Submitting or restarting also clears the record, so a
+submitted result is never reopened as an active attempt. Storage is local-only
+and optional: denied or unavailable browser storage does not prevent play.
+
 ## Selection
 
 The player selects two diagonally opposite corners. The session normalises

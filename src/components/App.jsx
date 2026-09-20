@@ -50,7 +50,8 @@ export const App = () => {
                     <a href="https://huckle.studio/">Steve Huckle</a>
                 </p>
                 <p className="privacy-note">
-                    Privacy: this game uses no cookies, accounts, or analytics.
+                    Privacy: unfinished hunts are stored in this browser. No cookies,
+                    accounts, analytics, or remote storage are used.
                 </p>
             </footer>
         </>

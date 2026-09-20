@@ -92,6 +92,62 @@ export const createRectangleHuntSession = (board, cornerCharacter = '+') => {
   return initialSession(board, cornerCharacter)
 }
 
+export const getSessionProgress = (session) => {
+  if (session.submittedFoundKeys !== null) return null
+
+  return {
+    foundRectangleKeys: [...session.foundKeys],
+    selectedCorner: cloneCorner(session.selectedCorner),
+    focusedRectangleKey: session.focusedKey,
+  }
+}
+
+export const restoreRectangleHuntSession = (
+  board,
+  cornerCharacter = '+',
+  progress
+) => {
+  const session = initialSession(board, cornerCharacter)
+
+  if (
+    progress === null
+    || typeof progress !== 'object'
+    || !Array.isArray(progress.foundRectangleKeys)
+    || !progress.foundRectangleKeys.every((key) => typeof key === 'string')
+    || new Set(progress.foundRectangleKeys).size !== progress.foundRectangleKeys.length
+  ) {
+    throw new TypeError('Saved hunt progress is invalid.')
+  }
+
+  const foundKeys = new Set(progress.foundRectangleKeys)
+  if ([...foundKeys].some((key) => !session.rectanglesByKey.has(key))) {
+    throw new TypeError('Saved hunt progress contains an unknown rectangle.')
+  }
+
+  const selectedCorner = progress.selectedCorner
+  if (selectedCorner !== null) {
+    assertCorner(selectedCorner)
+    if (!isEligibleCorner(session, selectedCorner)) {
+      throw new TypeError('Saved hunt progress contains an ineligible corner.')
+    }
+  }
+
+  const focusedKey = progress.focusedRectangleKey
+  if (focusedKey !== null && (!foundKeys.has(focusedKey) || typeof focusedKey !== 'string')) {
+    throw new TypeError('Saved hunt progress contains an unknown focus.')
+  }
+
+  return {
+    ...session,
+    foundKeys,
+    selectedCorner: cloneCorner(selectedCorner),
+    focusedKey,
+    selectionResult: selectedCorner === null
+      ? null
+      : { type: 'selection-started', corner: cloneCorner(selectedCorner) },
+  }
+}
+
 export const selectCorner = (session, corner) => {
   assertCorner(corner)
 
