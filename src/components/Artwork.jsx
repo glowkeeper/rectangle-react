@@ -101,7 +101,6 @@ export const Artwork = () => {
                             name="asciiArt"
                             value={draft.asciiArt}
                             required
-                            autoFocus
                             onChange={handleChangeInput}
                             aria-invalid={Boolean(error)}
                             aria-describedby={error ? 'board-error' : undefined}

@@ -16,6 +16,13 @@ describe('Artwork board limits', () => {
             .toHaveAttribute('data-corner-state', 'selected')
     })
 
+    test('does not move initial focus past the fixed-board controls', () => {
+        render(<Artwork />)
+
+        expect(screen.getByLabelText('art:')).not.toHaveAttribute('autofocus')
+        expect(screen.getByLabelText('art:')).not.toHaveFocus()
+    })
+
     test('uses the native colour input', () => {
         render(<Artwork />)
 

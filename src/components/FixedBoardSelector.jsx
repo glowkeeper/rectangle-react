@@ -58,13 +58,6 @@ export const FixedBoardSelector = ({
     onSelectCorner(corner)
   }
 
-  const handleCornerKeyDown = (event, corner) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      selectCorner(corner)
-    }
-  }
-
   const handleBoardKeyDown = (event) => {
     if (event.key !== 'Escape' || selectedCorner === null) return
 
@@ -119,7 +112,6 @@ export const FixedBoardSelector = ({
                   data-corner-state={state}
                   key={key}
                   onClick={() => selectCorner(corner)}
-                  onKeyDown={(event) => handleCornerKeyDown(event, corner)}
                   onFocus={() => updateCandidate(corner)}
                   onBlur={() => clearCandidate(corner)}
                   onPointerEnter={() => updateCandidate(corner)}

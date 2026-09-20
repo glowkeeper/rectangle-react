@@ -40,7 +40,7 @@ describe('FixedBoardSelector', () => {
     expect(onSelectCorner).toHaveBeenCalledWith({ row: 0, column: 3 })
   })
 
-  test('Enter and Space report the same coordinate event as pointer input', () => {
+  test('uses native buttons for keyboard and pointer activation', () => {
     const onSelectCorner = vi.fn()
     render(
       <FixedBoardSelector
@@ -53,10 +53,13 @@ describe('FixedBoardSelector', () => {
     })
 
     fireEvent.keyDown(corner, { key: 'Enter' })
-    fireEvent.keyDown(corner, { key: ' ' })
+    expect(onSelectCorner).not.toHaveBeenCalled()
 
-    expect(onSelectCorner).toHaveBeenNthCalledWith(1, { row: 0, column: 3 })
-    expect(onSelectCorner).toHaveBeenNthCalledWith(2, { row: 0, column: 3 })
+    fireEvent.click(corner)
+
+    expect(corner.tagName).toBe('BUTTON')
+    expect(onSelectCorner).toHaveBeenCalledTimes(1)
+    expect(onSelectCorner).toHaveBeenCalledWith({ row: 0, column: 3 })
   })
 
   test('distinguishes the first corner from a focused candidate', () => {
