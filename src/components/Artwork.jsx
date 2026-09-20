@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { FixedBoardSelector } from './FixedBoardSelector'
 import {
@@ -10,10 +10,29 @@ import {
     rectangleCoordinatesKey,
     restartSession,
     selectCorner,
+    submitSession,
 } from '../rectangleHuntSession'
 import { FIXED_BOARD, FIXED_BOARD_CORNER } from '../fixedBoard'
 
+export const submittedResultMessage = (foundCount, total) => {
+    if (total === 1) {
+        return foundCount === 1
+            ? 'You found the rectangle.'
+            : 'You did not find the rectangle.'
+    }
+
+    if (foundCount === total) {
+        return `You found all ${total} rectangles.`
+    }
+
+    return `You found ${foundCount} of ${total} rectangles.`
+}
+
 const feedbackMessage = (playState) => {
+    if (playState.status === 'submitted') {
+        return submittedResultMessage(playState.foundCount, playState.total)
+    }
+
     switch (playState.selectionResult?.type) {
         case 'selection-started':
             return 'First corner selected. Choose the opposite corner.'
@@ -37,10 +56,13 @@ const progressLabel = (count) => {
 }
 
 export const Artwork = () => {
+    const finishButtonRef = useRef(null)
+    const finishDialogRef = useRef(null)
     const [session, setSession] = useState(() => {
         return createRectangleHuntSession(FIXED_BOARD, FIXED_BOARD_CORNER)
     })
     const playState = getPlayState(session)
+    const submitted = playState.status === 'submitted'
     const focusedKey = playState.focusedRectangle === null
         ? null
         : rectangleCoordinatesKey(playState.focusedRectangle)
@@ -56,6 +78,28 @@ export const Artwork = () => {
         setSession((current) => cancelSelection(current))
     }
 
+    const openFinishDialog = () => {
+        if (typeof finishDialogRef.current.showModal === 'function') {
+            finishDialogRef.current.showModal()
+        } else {
+            finishDialogRef.current.setAttribute('open', '')
+        }
+    }
+
+    const closeFinishDialog = () => {
+        if (typeof finishDialogRef.current.close === 'function') {
+            finishDialogRef.current.close()
+        } else {
+            finishDialogRef.current.removeAttribute('open')
+            finishButtonRef.current?.focus()
+        }
+    }
+
+    const handleSubmit = () => {
+        closeFinishDialog()
+        setSession((current) => submitSession(current))
+    }
+
     return (
         <section className="rectangle-hunt" aria-label="Rectangle Hunt">
             <FixedBoardSelector
@@ -64,9 +108,10 @@ export const Artwork = () => {
                 focusedRectangle={playState.focusedRectangle}
                 onSelectCorner={handleSelectCorner}
                 onCancelSelection={handleCancelSelection}
+                disabled={submitted}
             />
 
-            <div className="hunt-status">
+            <div className={`hunt-status${submitted ? ' hunt-status--submitted' : ''}`}>
                 <p
                     className="hunt-feedback"
                     role="status"
@@ -75,12 +120,14 @@ export const Artwork = () => {
                 >
                     {feedbackMessage(playState)}
                 </p>
-                <output
-                    className="hunt-progress"
-                    aria-label={progressLabel(playState.foundCount)}
-                >
-                    {playState.foundCount} found
-                </output>
+                {!submitted && (
+                    <output
+                        className="hunt-progress"
+                        aria-label={progressLabel(playState.foundCount)}
+                    >
+                        {playState.foundCount} found
+                    </output>
+                )}
             </div>
 
             {playState.foundCount > 0 && (
@@ -109,6 +156,16 @@ export const Artwork = () => {
             )}
 
             <div className="hunt-actions">
+                {!submitted && (
+                    <button
+                        type="button"
+                        className="finish-button"
+                        ref={finishButtonRef}
+                        onClick={openFinishDialog}
+                    >
+                        Finish hunt
+                    </button>
+                )}
                 <button
                     type="button"
                     className="restart-button"
@@ -117,6 +174,27 @@ export const Artwork = () => {
                     Restart puzzle
                 </button>
             </div>
+
+            <dialog
+                className="finish-dialog"
+                ref={finishDialogRef}
+                aria-labelledby="finish-dialog-title"
+                aria-describedby="finish-dialog-description"
+            >
+                <h2 id="finish-dialog-title">Finish this hunt?</h2>
+                <p id="finish-dialog-description">
+                    Reveal the answer and end this attempt? You won&apos;t be able
+                    to continue this hunt.
+                </p>
+                <div className="finish-dialog-actions">
+                    <button type="button" autoFocus onClick={closeFinishDialog}>
+                        Keep hunting
+                    </button>
+                    <button type="button" onClick={handleSubmit}>
+                        Reveal answer
+                    </button>
+                </div>
+            </dialog>
         </section>
     )
 }
